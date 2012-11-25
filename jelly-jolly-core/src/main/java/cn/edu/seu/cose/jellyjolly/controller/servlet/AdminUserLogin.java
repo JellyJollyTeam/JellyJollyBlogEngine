@@ -23,6 +23,7 @@ import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
 import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.model.session.UserAuthorization;
 import java.io.IOException;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,9 +43,9 @@ public class AdminUserLogin extends HttpServlet {
     private static final String PARAM_USERNAME = "username";
 
     private static final String PARAM_PASSWORD = "password";
-    
+
     private static final String PARAM_REMEMBER = "rememberMe";
-    
+
     private static final String REMEMBER_VALUE = "true";
 
     private static final String COOKIE_USERNAME = "admin_username";
@@ -54,7 +55,7 @@ public class AdminUserLogin extends HttpServlet {
     private static final String LOGIN_PAGE_WITH_ERROR = "./login.jsp?error=1";
 
     private static final String ADMIN_HOME_PAGE_URL = "./admin/admin.jsp";
-    
+
     private static final int A_DAY_SECONDS = 24 * 60 * 60;
 
     private static final long THIRTY_MINUTES_MILLIS = 1000 * 60 * 30;
@@ -92,12 +93,14 @@ public class AdminUserLogin extends HttpServlet {
             if (REMEMBER_VALUE.equalsIgnoreCase(rememberMe)) {
                 addCookie(response, user);
             }
+            Date currentDate = new Date();
+            userDataAccess.setLastLoginTime(user.getUserId(), currentDate);
             doIfConfirmed(session, request, response, user);
         } catch (DataAccessException ex) {
             response.sendError(500, ex.getCause().getMessage());
         }
     }
-    
+
     private void addCookie(HttpServletResponse response, AdminUser user) {
         // ...
     }
