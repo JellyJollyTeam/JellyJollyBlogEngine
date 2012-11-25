@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
 import cn.edu.seu.cose.jellyjolly.model.dao.BlogInfoDataAccess;
@@ -36,45 +35,27 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "BlogInfoOperation", urlPatterns = {"/admin/info"})
 public class BlogInfoOperation extends HttpServlet {
-    
+
     private static final String PARAM_TITLE = "title";
-    
     private static final String PARAM_SUBTITLE = "subtitle";
-    
     private static final String PARAM_URL = "url";
-    
+
     private static BlogInfoDataAccess getBlogInfoDataAccess() {
-            DataAccessFactoryManager manager =
+        DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getBlogInfoDataAccess();
+        DataAccessFactory factory = manager.getAvailableFactory();
+        return factory.getBlogInfoDataAccess();
     }
 
-    /**
-     * Handles the HTTP
-     * <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
-        doPost(request, response);
-    }
-    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String title = request.getParameter(PARAM_TITLE);
         String subtitle = request.getParameter(PARAM_SUBTITLE);
         String url = request.getParameter(PARAM_URL);
-        
+
         BlogInfoDataAccess blogInfoDao = getBlogInfoDataAccess();
-        
+
         try {
             if (title != null) {
                 blogInfoDao.setBlogTitle(title);
@@ -85,11 +66,11 @@ public class BlogInfoOperation extends HttpServlet {
             if (url != null) {
                 blogInfoDao.setBlogUrl(url);
             }
+            response.sendRedirect("./options.jsp");
         } catch (DataAccessException ex) {
             Logger.getLogger(BlogInfoOperation.class.getName())
                     .log(Level.SEVERE, ex.getMessage(), ex);
             response.sendError(500, ex.getMessage());
         }
     }
-
 }

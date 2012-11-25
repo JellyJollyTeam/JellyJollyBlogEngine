@@ -32,26 +32,26 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
  * @author rAy <predator.ray@gmail.com>
  */
 public class GetPostTitleTag extends SimpleTagSupport {
-    
+
     private BlogPostDataAccess blogPostDao;
-    
+
     private long postId;
-    
+
     private static BlogPostDataAccess getBlogPostDataAccess() {
             DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
             DataAccessFactory factory = manager.getAvailableFactory();
             return factory.getBlogPostDataAccess();
     }
-    
+
     public GetPostTitleTag() {
             blogPostDao = getBlogPostDataAccess();
     }
-    
+
     public void setPostId(Object postId) {
         this.postId = (Long) postId;
     }
-    
+
     @Override
     public void doTag() throws IOException {
         try {
