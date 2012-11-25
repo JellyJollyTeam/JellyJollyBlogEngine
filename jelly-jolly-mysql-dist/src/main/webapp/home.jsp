@@ -71,7 +71,6 @@ Author     : sceliay & fanTasy
                         <input style="border: 1px solid; border-color: #CCC" type="text" name="keyword" id="s" placeholder="关键词" size="20"/>
                         <input id="searchButton" type="submit" name="submit" value="搜索" />
                     </form>
-                    <hr />
                     <div class="sort">
                         <h4>归档</h4>
                         <c:forEach items="${archivelist}" var="archive">
@@ -80,14 +79,12 @@ Author     : sceliay & fanTasy
                                 (<c:out value="${archive.count}"/>)</h5>
                             </c:forEach>
                     </div>
-                    <hr />
                     <div class="sort">
                         <h4>分类</h4>
                         <c:forEach items="${categoryList}" var="category">
                             <h5><a href="?categoryid=<c:out value="${category.categoryId}"/>#home"><c:out value="${category.name}"/></a></h5>
                         </c:forEach>
                     </div>
-                    <hr />
                     <div class="function">
                         <h4>功能</h4>
                         <c:choose>
@@ -100,7 +97,6 @@ Author     : sceliay & fanTasy
                             </c:otherwise>
                         </c:choose>
                     </div>
-                    <hr />
                     <div>
                         <h4>链接</h4>
                         <c:forEach items="${linkList}" var="link">
