@@ -24,7 +24,7 @@ Author     : sceliay & fanTasy
             <div class="header">
                 <h1 id="blog-name"><c:out value="${blogInfo.blogTitle}"/></h1>
                 <h4 id="blog-name2"><c:out value="${blogInfo.blogSubTitle}"/></h4>
-                <img src="images/shore.jpg" width="1024" height="45%" alt="img" />
+                <img src="images/shore.jpg" width="100%" height="300px" />
             </div>
             <div class="centerbar">
                 <ul class="nav">
