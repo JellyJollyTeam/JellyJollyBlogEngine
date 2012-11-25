@@ -9,6 +9,12 @@
 
     <name>Jelly Jolly Blog Engine - SAE Distribution</name>
 
+    <parent>
+        <groupId>cn.edu.seu.cose.jellyjolly</groupId>
+        <artifactId>jelly-jolly</artifactId>
+        <version>1.0</version>
+    </parent>
+
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

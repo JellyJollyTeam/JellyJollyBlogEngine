@@ -37,47 +37,47 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class BlogPostListBuilder extends HttpFilter {
-    
+
     private static final String INFO_INVALID_INPUT =
             "BlogPostListBuilder: invalid input";
-    
+
     public static final String ATTRI_POST_LIST = "postList";
-    
+
     public static final String ATTRI_POST_COUNT = "postCount";
-    
+
     private static final String PARAM_MAX_PER_PAGE = "max";
-    
+
     private static final String PARAM_PAGE_NUM = "page";
-    
+
     private static final String PARAM_YEAR = "year";
-    
+
     private static final String PARAM_MONTH = "month";
-    
+
     private static final String PARAM_CATEGORY_ID = "categoryid";
-    
+
     private static final String PARAM_KEYWORD = "keyword";
-    
+
     private static final long DEFAULT_PAGE = 1;
-    
+
     private static final long DEFAULT_MAX = 5;
-    
+
     private static final long DEFAULT_OFFSET = 0;
-    
+
     private BlogPostDataAccess blogPostDataAccess;
-    
+
     private static BlogPostDataAccess getBlogPostDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getBlogPostDataAccess();
+        DataAccessFactoryManager manager =
+            DataAccessFactoryManager.getInstance();
+        DataAccessFactory factory = manager.getAvailableFactory();
+        return factory.getBlogPostDataAccess();
     }
-    
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
         blogPostDataAccess = getBlogPostDataAccess();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response, FilterChain chain)
@@ -88,7 +88,7 @@ public class BlogPostListBuilder extends HttpFilter {
         String yearParam = request.getParameter(PARAM_YEAR);
         String monthParam = request.getParameter(PARAM_MONTH);
         String keyword = request.getParameter(PARAM_KEYWORD);
-        
+
         // invalid user input
         if (!Utils.isNumericOrNull(pageParam)
                 || !Utils.isNumericOrNull(categoryIdParam)
@@ -98,25 +98,25 @@ public class BlogPostListBuilder extends HttpFilter {
             response.sendError(400, INFO_INVALID_INPUT);
             return;
         }
-        
+
         // get post list by page number
         if ((yearParam == null || monthParam == null) && keyword == null) {
             doGetPostList(request, response, chain,
                     pageParam, maxParam, categoryIdParam);
             return;
         }
-        
+
         // get post list by keyword
         if (keyword != null) {
             doGetSearchResult(request, response, chain, keyword, pageParam, maxParam);
             return;
         }
-        
+
         // get post list by monthly archive
         doMontlyArchive(request, response, chain,
                     yearParam, monthParam, pageParam, maxParam);
     }
-    
+
     private void doGetPostList(HttpServletRequest request,
             HttpServletResponse response, FilterChain chain,
             String pageParam, String maxParam, String categoryIdParam)
@@ -124,12 +124,12 @@ public class BlogPostListBuilder extends HttpFilter {
         try {
             long page = (pageParam == null) ? DEFAULT_PAGE : Long.valueOf(pageParam);
             long max = (maxParam == null) ? DEFAULT_MAX : Long.valueOf(maxParam);
-            
+
             long offset = ((page - 1) < 0)
                     ? DEFAULT_OFFSET
                     : (page - 1) * max;
             long limit = max;
-            
+
             // get posts of a category
             if (categoryIdParam != null) {
                 int categoryId = Integer.valueOf(categoryIdParam);
@@ -139,7 +139,7 @@ public class BlogPostListBuilder extends HttpFilter {
                 long postCount = blogPostDataAccess.getPostNumber(categoryId);
                 buildBeans(request, postList, postCount);
             }
-            
+
             // get all posts
             if (categoryIdParam == null) {
                 List<BlogPost> postList = blogPostDataAccess.getPosts(offset, limit,
@@ -157,10 +157,10 @@ public class BlogPostListBuilder extends HttpFilter {
             response.sendError(500, ex.getMessage());
             return;
         }
-        
+
         chain.doFilter(request, response);
     }
-    
+
     private void doMontlyArchive(HttpServletRequest request,
             HttpServletResponse response, FilterChain chain,
             String yearParam, String monthParam, String pageParam, String maxParam)
@@ -172,17 +172,17 @@ public class BlogPostListBuilder extends HttpFilter {
             response.sendError(400, INFO_INVALID_INPUT);
             return;
         }
-        
+
         try {
             int year = Integer.valueOf(yearParam);
             int month = Integer.valueOf(monthParam);
             long max = Long.valueOf(maxParam);
-            
+
             long page = (pageParam == null) ? 1 : Long.valueOf(pageParam);
-            
+
             long offset = (page - 1) * max;
             long limit = max;
-            
+
             List<BlogPost> postList = blogPostDataAccess.getPostsByMonthlyArchive(year,
                     month, offset, limit,
                     BlogPostDataAccess.BlogPostOrderStrategy.ORDERED_BY_DATE_DESC);
@@ -197,10 +197,10 @@ public class BlogPostListBuilder extends HttpFilter {
             response.sendError(500, ex.getMessage());
             return;
         }
-        
+
         chain.doFilter(request, response);
     }
-    
+
     private void doGetSearchResult(HttpServletRequest request,
             HttpServletResponse response, FilterChain chain,
             String keyword, String pageParam, String maxParam)
@@ -226,10 +226,10 @@ public class BlogPostListBuilder extends HttpFilter {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private void buildBeans(HttpServletRequest request, List<BlogPost> postList, long postCount) {
             request.setAttribute(ATTRI_POST_LIST, postList);
             request.setAttribute(ATTRI_POST_COUNT, postCount);
     }
-    
+
 }

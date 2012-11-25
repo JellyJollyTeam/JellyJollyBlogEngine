@@ -39,169 +39,172 @@ import java.util.List;
  * @author rAy <predator.ray@gmail.com>
  */
 public class BlogPostDataAccessImpl implements BlogPostDataAccess {
-    
+
     private static final BlogPostOrderStrategy DEFAULT_STRATEGY =
             BlogPostOrderStrategy.ORDERED_BY_DATE_DESC;
-    
+
     private static final String COLUMN_POST_ID = "blog_post_id";
-    
+
     private static final String COLUMN_AUTHOR_USER_ID = "author_user_id";
-    
+
     private static final String COLUMN_CATEGORY_ID = "category_id";
-    
+
     private static final String COLUMN_POST_DATE = "post_date";
-    
+
     private static final String COLUMN_POST_TITLE = "post_title";
-    
+
     private static final String COLUMN_POST_CONTENT = "post_content";
-    
+
     private static final String COLUMN_META_VALUE = "meta_value";
-    
+
     private static final String COLUMN_YEAR = "year";
-    
+
     private static final String COLUMN_MONTH = "month";
-    
+
     private static final String COLUMN_COUNT = "count";
-    
+
     private static final String STATEMENT_GET_POST_BY_ID =
             "SELECT * FROM jj_blog_posts WHERE blog_post_id=?;";
-    
+
     private static final String STATEMENT_GET_LATEST =
             "SELECT post_date FROM jj_blog_posts ORDER BY post_date DESC LIMIT 1;";
-    
+
     private static final String STATEMENT_GET_LATEST_BY_USER_ID =
             "SELECT MAX(post_date) FROM jj_blog_posts WHERE user_id=?;";
-    
+
     private static final String STATEMENT_GET_POSTS =
             "SELECT * FROM jj_blog_posts LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_ORDER_BY_DATE_ASC =
             "SELECT * FROM jj_blog_posts ORDER BY post_date ASC LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_ORDER_BY_DATE_DESC =
             "SELECT * FROM jj_blog_posts ORDER BY post_date DESC LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_DATE =
             "SELECT * FROM jj_blog_posts WHERE post_date BETWEEN ? AND ? "
             + "ORDER BY post_date LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_DATE_ORDER_BY_DATE_ASC =
             "SELECT * FROM jj_blog_posts WHERE post_date BETWEEN ? AND ? "
             + "ORDER BY post_date ASC LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_DATE_ORDER_BY_DATE_DESC =
             "SELECT * FROM jj_blog_posts WHERE post_date BETWEEN ? AND ? "
             + "ORDER BY post_date DESC LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_KEYWORD =
-            "SELECT * FROM jj_blog_posts WHERE MATCH(post_title) AGAINST(?) "
-            + "OR MATCH(post_content) AGAINST(?) "
+            "SELECT * FROM jj_blog_posts WHERE "
+            + "post_title LIKE CONCAT('%', ?, '%') "
+            + "OR post_content LIKE CONCAT('%', ?, '%') "
             + "LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_KEYWORD_ORDER_BY_DATE_ASC =
-            "SELECT * FROM jj_blog_posts WHERE MATCH(post_title) AGAINST(?) "
-            + "OR MATCH(post_content) AGAINST(?) "
+            "SELECT * FROM jj_blog_posts WHERE "
+            + "post_title LIKE CONCAT('%', ?, '%') "
+            + "OR post_content LIKE CONCAT('%', ?, '%') "
             + "ORDER BY post_date ASC LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_KEYWORD_ORDER_BY_DATE_DESC =
-            "SELECT * FROM jj_blog_posts WHERE MATCH(post_title) AGAINST(?) "
-            + "OR MATCH(post_content) AGAINST(?) "
+            "SELECT * FROM jj_blog_posts WHERE "
+            + "post_title LIKE CONCAT('%', ?, '%') "
+            + "OR post_content LIKE CONCAT('%', ?, '%') "
             + "ORDER BY post_date DESC LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_USER_ID =
             "SELECT * FROM jj_blog_posts WHERE author_user_id=? LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_USER_ID_ORDER_BY_DATE_ASC =
             "SELECT * FROM jj_blog_posts WHERE author_user_id=? ORDER BY post_date ASC "
             + "LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_USER_ID_ORDER_BY_DATE_DESC =
             "SELECT * FROM jj_blog_posts WHERE author_user_id=? ORDER BY post_date DESC "
             + "LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_CATEGORY_ID =
             "SELECT * FROM jj_blog_posts WHERE category_id=? LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_CATEGORY_ID_DATE_ASC =
             "SELECT * FROM jj_blog_posts WHERE category_id=? ORDER BY post_date ASC "
             + "LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_BY_CATEGORY_ID_DATE_DESC =
             "SELECT * FROM jj_blog_posts WHERE category_id=? ORDER BY post_date DESC "
             + "LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_MONTHLY =
             "SELECT * FROM jj_blog_posts WHERE YEAR(post_date)=? AND MONTH(post_date)=? "
             + "LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_MONTHLY_DATE_ASC =
             "SELECT * FROM jj_blog_posts WHERE YEAR(post_date)=? AND MONTH(post_date)=? "
             + "ORDER BY post_date ASC LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_MONTHLY_DATE_DESC =
             "SELECT * FROM jj_blog_posts WHERE YEAR(post_date)=? AND MONTH(post_date)=? "
             + "ORDER BY post_date DESC LIMIT ?, ?;";
-    
+
     private static final String STATEMENT_GET_POSTS_NUM =
             "SELECT COUNT(1) FROM jj_blog_posts;";
-    
+
     private static final String STATEMENT_GET_MONTHLY_ARCHIVE_LIST =
             "SELECT YEAR(post_date) AS year, MONTH(post_date) AS month, COUNT(1) AS count "
             + "FROM jj_blog_posts GROUP BY year, month ORDER BY year DESC, month DESC;";
-    
+
     private static final String STATEMENT_GET_ARCHIVE_POSTS_NUM =
             "SELECT count FROM (SELECT YEAR(post_date) AS year, "
             + "MONTH(post_date) AS month, COUNT(1) AS count FROM jj_blog_posts "
             + "GROUP BY year, month) t WHERE year=? AND month=?;";
-    
+
     private static final String STATEMENT_GET_CATEGORY_POSTS_NUM =
             "SELECT COUNT(1) FROM jj_blog_posts WHERE category_id=?;";
-    
+
     private static final String STATEMENT_GET_POSTS_NUM_BY_KEYWORD =
             "SELECT count(1) FROM jj_blog_posts WHERE MATCH(post_title) AGAINST(?) "
             + "OR MATCH(post_content) AGAINST(?);";
-    
+
     private static final String STATEMENT_CREATE_NEW_POST =
             "INSERT INTO jj_blog_posts(author_user_id, category_id, post_date,"
             + "post_title, post_content) VALUES (?, ?, ?, ?, ?);";
-    
+
     private static final String STATEMENT_UPDATE_POST =
             "UPDATE jj_blog_posts SET author_user_id=?, category_id=?, post_date=?, "
             + "post_title=?, post_content=? WHERE blog_post_id=?;";
-    
+
     private static final String STATEMENT_UPDATE_TITLE =
             "UPDATE jj_blog_posts SET post_title=? WHERE blog_post_id=?;";
-    
+
     private static final String STATEMENT_UPDATE_CONTENT =
             "UPDATE jj_blog_posts SET post_content=? WHERE blog_post_id=?;";
-    
+
     private static final String STATEMENT_UPDATE_CATEGORY =
             "UPDATE jj_blog_posts SET category_id=? WHERE blog_post_id=?;";
-    
+
     private static final String STATEMENT_DELETE_POST =
             "DELETE FROM jj_blog_posts WHERE blog_post_id=?;";
-    
+
     private static final String STATEMENT_GET_PROPERTY =
             "SELECT * FROM jj_blog_post_meta WHERE post_id=? AND meta_key=?;";
-    
+
     private static final String STATEMENT_DEL_PROPERTY =
             "DELETE FROM jj_blog_post_meta WHERE post_id=? AND meta_key=?;";
-    
+
     private static final String STATEMENT_SET_PROPERTY =
             "INSERT INTO jj_blog_post_meta(post_id, meta_key, meta_value) "
             + "VALUES (?, ?, ?);";
-    
+
     private static final String STATEMENT_CLEAR_PROPERTIES =
             "DELETE FROM jj_blog_post_meta WHERE post_id=?;";
-    
+
     private ConnectionFactory factory;
-    
+
     private AdminUserDataAccess adminUserDataAccess;
-    
+
     private CategoryDataAccess categoryDataAccess;
-    
+
     private CommentDataAccess commentDataAccess;
-    
+
     private BlogPost getPostByResultSet(ResultSet rs) throws SQLException,
             DataAccessException {
         long id = rs.getLong(COLUMN_POST_ID);
@@ -210,7 +213,7 @@ public class BlogPostDataAccessImpl implements BlogPostDataAccess {
         Timestamp postDate = rs.getTimestamp(COLUMN_POST_DATE);
         String title = rs.getString(COLUMN_POST_TITLE);
         String content = rs.getString(COLUMN_POST_CONTENT);
-        
+
         BlogPost post = new BlogPost();
         post.setAuthor(adminUserDataAccess.getUser(authorId));
         post.setCategory(categoryDataAccess.getCategoryById(categoryId));
@@ -221,7 +224,7 @@ public class BlogPostDataAccessImpl implements BlogPostDataAccess {
         post.setContent(content);
         return post;
     }
-    
+
     private List<BlogPost> getPostsByResultSet(ResultSet rs) throws SQLException,
             DataAccessException {
         List<BlogPost> postList = new LinkedList<BlogPost>();
@@ -231,14 +234,14 @@ public class BlogPostDataAccessImpl implements BlogPostDataAccess {
         }
         return postList;
     }
-    
+
     private Date getDateByResultSet(ResultSet rs) throws SQLException {
         Timestamp timestamp = rs.getTimestamp(COLUMN_POST_DATE);
         return (timestamp == null)
                 ? null
                 : new Date(timestamp.getTime());
     }
-    
+
     public BlogPostDataAccessImpl(ConnectionFactory factory,
             AdminUserDataAccess adminUserDataAccess,
             CategoryDataAccess categoryDataAccess,
@@ -259,7 +262,7 @@ public class BlogPostDataAccessImpl implements BlogPostDataAccess {
             if (!rs.next()) {
                 return null;
             }
-            
+
             return getDateByResultSet(rs);
         } catch (SQLException ex) {
             throw new JdbcDataAccessException(ex);
@@ -279,7 +282,7 @@ public class BlogPostDataAccessImpl implements BlogPostDataAccess {
             if (!rs.next()) {
                 return null;
             }
-            
+
             return getDateByResultSet(rs);
         } catch (SQLException ex) {
             throw new JdbcDataAccessException(ex);
@@ -299,7 +302,7 @@ public class BlogPostDataAccessImpl implements BlogPostDataAccess {
             if (!rs.next()) {
                 return null;
             }
-            
+
             return getPostByResultSet(rs);
         } catch (SQLException ex) {
             throw new JdbcDataAccessException(ex);

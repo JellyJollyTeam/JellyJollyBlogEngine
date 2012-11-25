@@ -68,7 +68,7 @@
                 </div>
                 <form method="get" name="searchFrom" action="#">
                     <!--<label class="assistive-text" for="search">搜索</label>-->
-                    <input type="text" name="search" id="s" placeholder="Search" size="10"/>
+                    <input type="text" name="keyword" id="s" placeholder="Search" size="10"/>
                     <input id="searchButton" type="submit" name="submit" value="搜索" />
                 </form>
                 <div class="sort">

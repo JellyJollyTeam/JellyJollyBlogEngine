@@ -14,37 +14,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc.mysql;
 
 import cn.edu.seu.cose.jellyjolly.model.dao.jdbc.ConnectionFactory;
 import cn.edu.seu.cose.jellyjolly.model.dao.jdbc.JdbcDataAccessException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
 public class MysqlConnectionFactory implements ConnectionFactory {
-    
+
     private DataSource dataSource;
-    
+
     public MysqlConnectionFactory() {
         try {
-            Context initCtx = new InitialContext();
-            Context envCtx = (Context) initCtx.lookup("java:comp/env");
-            dataSource = (DataSource) envCtx.lookup("jdbc/jellyjolly_schema");
-        } catch (NamingException ex) {
+            initDataSource();
+        } catch (IOException ex) {
             Logger.getLogger(MysqlConnectionFactory.class.getName())
-                    .log(Level.SEVERE, ex.getMessage());
+                    .log(Level.SEVERE, ex.getMessage(), ex);
         }
+    }
+
+    private void initDataSource() throws IOException {
+        BasicDataSource ds = new BasicDataSource();
+        Properties cfgpp = new Properties();
+        cfgpp.load(MysqlConnectionFactory.class.getResourceAsStream(
+                "dbcp.jdbc.properties"));
+        ds.setDriverClassName(cfgpp.getProperty("jdbc.driverClassName"));
+        ds.setUrl(cfgpp.getProperty("jdbc.url"));
+        ds.setUsername(cfgpp.getProperty("jdbc.username"));
+        ds.setPassword(cfgpp.getProperty("jdbc.password"));
+
+        dataSource = ds;
     }
 
     @Override
@@ -77,5 +87,4 @@ public class MysqlConnectionFactory implements ConnectionFactory {
             throw new JdbcDataAccessException(ex);
         }
     }
-
 }

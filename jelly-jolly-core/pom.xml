@@ -10,10 +10,11 @@
     <name>Jelly Jolly Blog Engine - Core</name>
     <description>An Open Source Java Blog Engine Core</description>
 
-    <organization>
-        <name>Colleage of Software Engineering, Southeast University</name>
-        <url>http://cose.seu.edu.cn/</url>
-    </organization>
+    <parent>
+        <groupId>cn.edu.seu.cose.jellyjolly</groupId>
+        <artifactId>jelly-jolly</artifactId>
+        <version>1.0</version>
+    </parent>
 
     <developers>
         <developer>
