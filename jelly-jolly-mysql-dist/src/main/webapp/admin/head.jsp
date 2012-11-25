@@ -10,5 +10,5 @@
     <img src="../images/logo-x.png" width="50" height="36" />
     <div id="back"><a href="../home.jsp"><c:out value="${blogInfo.blogTitle}"/></a></div>
 
-    <h4 id="welcome">welcome，<c:out value="${userAuth.user.displayName}"/></h4>
+    <h4 id="welcome">你好，<c:out value="${userAuth.user.displayName}"/></h4>
 </div>
