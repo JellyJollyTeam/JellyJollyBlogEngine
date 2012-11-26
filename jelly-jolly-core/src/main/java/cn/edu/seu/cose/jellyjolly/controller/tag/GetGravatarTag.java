@@ -46,11 +46,11 @@ public class GetGravatarTag extends SimpleTagSupport {
             byte[] byteArray = messageDigest.digest(input);
             StringBuilder md5StrBuff = new StringBuilder();
             for (int i = 0; i < byteArray.length; i++) {
-                if (Integer.toHexString(0xFF & byteArray[i]).length() == 1) {
-                    md5StrBuff.append("0").append(Integer.toHexString(
-                            0xFF & byteArray[i]));
+                String hexStr = Integer.toHexString(0xFF & byteArray[i]);
+                if (hexStr.length() == 1) {
+                    md5StrBuff.append("0").append(hexStr);
                 } else {
-                    md5StrBuff.append(Integer.toHexString(0xFF & byteArray[i]));
+                    md5StrBuff.append(hexStr);
                 }
             }
             JspWriter out = getJspContext().getOut();
