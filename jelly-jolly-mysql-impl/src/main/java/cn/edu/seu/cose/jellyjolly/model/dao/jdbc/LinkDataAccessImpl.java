@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.dto.Link;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import cn.edu.seu.cose.jellyjolly.dao.LinkDataAccess;
+import cn.edu.seu.cose.jellyjolly.dto.Link;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,40 +26,33 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class LinkDataAccessImpl implements LinkDataAccess {
+public class LinkDataAccessImpl extends AbstractDataAccess implements LinkDataAccess {
 
     private static final String COLUMN_LINK_ID = "link_id";
-
     private static final String COLUMN_LINK_TITLE = "link_title";
-
     private static final String COLUMN_LINK_IMAGE = "link_image";
-
     private static final String COLUMN_LINK_URL = "link_url";
-
     private static final String STATEMENT_GET_LINK_BY_ID =
             "SELECT * FROM jj_links WHERE link_id=?;";
-
     private static final String STATEMENT_GET_LINKS =
             "SELECT * FROM jj_links;";
-
     private static final String STATEMENT_GET_LINK_NUM =
             "SELECT COUNT(1) FROM jj_links;";
-
     private static final String STATEMENT_CREATE_LINK =
             "INSERT INTO jj_links(link_title, link_image, link_url) VALUES (?, ?, ?);";
-
     private static final String STATEMENT_CREATE_LINK_WITHOUT_IMAGE =
             "INSERT INTO jj_links(link_title, link_url) VALUES (?, ?);";
-
     private static final String STATEMENT_UPDATE_LINK =
             "UPDATE jj_links SET link_title=?, link_image=?, link_url=? "
             + "WHERE link_id=?;";
-
     private static final String STATEMENT_DELETE_LINK_BY_ID =
             "DELETE FROM jj_links WHERE link_id=?;";
 
@@ -77,16 +69,16 @@ public class LinkDataAccessImpl implements LinkDataAccess {
         link.setUrl(url);
         return link;
     }
+    private static final Logger logger = Logger.getLogger(
+            LinkDataAccessImpl.class.getName());
 
-    private ConnectionFactory factory;
-
-    public LinkDataAccessImpl(ConnectionFactory factory) {
-        this.factory = factory;
+    public LinkDataAccessImpl(DataSource dataSource) {
+        super(dataSource);
     }
 
     @Override
     public Link getLinkById(long linkId) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_LINK_BY_ID);
@@ -98,15 +90,16 @@ public class LinkDataAccessImpl implements LinkDataAccess {
             Link link = getLinkByResultSet(rs);
             return link;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public List<Link> getAllLinks() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_LINKS);
@@ -118,23 +111,25 @@ public class LinkDataAccessImpl implements LinkDataAccess {
             }
             return links;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public long getLinkNumber() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_LINK_NUM);
             ResultSet rs = ps.executeQuery();
             return (rs.next()) ? rs.getLong(1) : 0;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -148,7 +143,7 @@ public class LinkDataAccessImpl implements LinkDataAccess {
     @Override
     public long createNewLink(String title, String url) throws DataAccessException {
 
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_CREATE_LINK_WITHOUT_IMAGE, Statement.RETURN_GENERATED_KEYS);
@@ -163,16 +158,17 @@ public class LinkDataAccessImpl implements LinkDataAccess {
             long id = rs.getLong(1);
             return id;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public long createNewLink(String title, String image, String url)
             throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_CREATE_LINK, Statement.RETURN_GENERATED_KEYS);
@@ -188,15 +184,16 @@ public class LinkDataAccessImpl implements LinkDataAccess {
             long id = rs.getLong(1);
             return id;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public void updateLink(Link link) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_UPDATE_LINK);
@@ -206,25 +203,26 @@ public class LinkDataAccessImpl implements LinkDataAccess {
             ps.setLong(4, link.getLinkId());
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public void deleteLink(long linkId) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_DELETE_LINK_BY_ID);
             ps.setLong(1, linkId);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
-
 }

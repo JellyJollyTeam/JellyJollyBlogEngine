@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
 import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
@@ -26,38 +25,37 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class AdminUserMetaDataAccess {
+public class AdminUserMetaDataAccess extends AbstractDataAccess {
 
     private static final String COLUMN_META_KEY = "meta_key";
-
     private static final String COLUMN_META_VALUE = "meta_value";
-
     private static final String STATEMENT_DELETE_USER_FROM_USER_META =
             "DELETE FROM jj_user_meta WHERE user_id=?;";
-
     private static final String STATEMENT_DELETE_KEY_FROM_USER_META =
             "DELETE FROM jj_user_meta WHERE user_id=? AND meta_key=?;";
-
     private static final String STATEMENT_GET_USER_META =
             "SELECT * FROM jj_user_meta WHERE user_id=?;";
-
     private static final String STATEMENT_PUT_USER_META =
-            "INSERT INTO jj_user_meta(user_id, meta_key, meta_value) VALUES (?, ?, ?);";
+            "INSERT INTO jj_user_meta(user_id, meta_key, meta_value) "
+            + "VALUES (?, ?, ?);";
+    private static final Logger logger = Logger.getLogger(
+            AdminUserMetaDataAccess.class.getName());
 
-    private ConnectionFactory factory;
-
-    public AdminUserMetaDataAccess(ConnectionFactory factory) {
-        this.factory = factory;
+    public AdminUserMetaDataAccess(DataSource dataSource) {
+        super(dataSource);
     }
 
     public Map<String, List<String>> getUserPropertiesMap(long userId)
             throws JdbcDataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_USER_META);
@@ -77,16 +75,18 @@ public class AdminUserMetaDataAccess {
             }
             return keyValueMap;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
-    public void addUserProperties(AdminUser user) throws JdbcDataAccessException {
+    public void addUserProperties(AdminUser user)
+            throws JdbcDataAccessException {
         Map<String, List<String>> keyValueMap =
                 getUserPropertiesMap(user.getUserId());
-        for (Map.Entry<String, List<String>> e: keyValueMap.entrySet()) {
+        for (Map.Entry<String, List<String>> e : keyValueMap.entrySet()) {
             String key = e.getKey();
             List<String> value = e.getValue();
             user.setOtherProperty(key, value.toArray(new String[0]));
@@ -95,7 +95,7 @@ public class AdminUserMetaDataAccess {
 
     public void deleteUserProperty(long userId, String key)
             throws JdbcDataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_DELETE_KEY_FROM_USER_META);
@@ -103,28 +103,31 @@ public class AdminUserMetaDataAccess {
             ps.setString(2, key);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
-    public void clearUserProperties(long userId) throws JdbcDataAccessException {
-        Connection connection = factory.newConnection();
+    public void clearUserProperties(long userId)
+            throws JdbcDataAccessException {
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_DELETE_USER_FROM_USER_META);
             ps.setLong(1, userId);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
-    public void deleteUserPropertiesTransaction(Connection connection, long userId)
-            throws SQLException {
+    public void deleteUserPropertiesTransaction(Connection connection,
+            long userId) throws SQLException {
         PreparedStatement ps = connection.prepareStatement(
                 STATEMENT_DELETE_USER_FROM_USER_META);
         ps.setLong(1, userId);
@@ -133,12 +136,12 @@ public class AdminUserMetaDataAccess {
 
     public void putUserProperties(long userId, String key, String[] values)
             throws JdbcDataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             connection.setAutoCommit(false);
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_PUT_USER_META);
-            for (String value: values) {
+            for (String value : values) {
                 ps.setLong(1, userId);
                 ps.setString(2, key);
                 ps.setString(3, value);
@@ -146,11 +149,11 @@ public class AdminUserMetaDataAccess {
             }
             connection.commit();
         } catch (SQLException ex) {
-            factory.rollbackConnection(connection);
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            rollbackConnection(connection);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
-
 }

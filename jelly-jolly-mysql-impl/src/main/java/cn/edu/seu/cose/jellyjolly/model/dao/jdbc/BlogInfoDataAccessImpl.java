@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
 import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,57 +28,49 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
+public class BlogInfoDataAccessImpl
+        extends AbstractDataAccess implements BlogInfoDataAccess {
 
     private static final String COLUMN_BLOG_ID = "blog_id";
-
     private static final String COLUMN_BLOG_TITLE = "blog_title";
-
     private static final String COLUMN_BLOG_SUBTITLE = "blog_subtitle";
-
     private static final String COLUMN_BLOG_URL = "blog_url";
-
     private static final String COLUMN_BLOG_META_KEY = "meta_key";
-
     private static final String COLUMN_BLOG_META_VALUE = "meta_value";
-
     private static final String STATEMENT_GET_BLOG_INFO =
             "SELECT * FROM jj_blog_info LIMIT 1;";
-
     private static final String STATEMENT_SET_BLOG_TITLE =
             "UPDATE jj_blog_info SET blog_title=?;";
-
     private static final String STATEMENT_SET_BLOG_SUB_TITLE =
             "UPDATE jj_blog_info SET blog_subtitle=?;";
-
     private static final String STATEMENT_GET_BLOG_INFO_META =
             "SELECT * FROM jj_blog_meta;";
-
     private static final String STATEMENT_GET_BLOG_INFO_META_BY_KEY =
             "SELECT meta_value FROM jj_blog_meta WHERE meta_key=?;";
-
     private static final String STATEMENT_ADD_BLOG_INFO_META =
             "INSERT INTO jj_blog_meta(meta_key, meta_value) VALUES (?, ?);";
-
     private static final String STATEMENT_DELETE_BLOG_INFO_META =
             "DELETE FROM jj_blog_meta WHERE meta_key=?;";
-
     private static final String STATEMENT_SET_BLOG_INFO_META =
-            "UPDATE jj_blog_meta SET meta_value=? WHERE meta_key=? AND meta_value=?;";
-
+            "UPDATE jj_blog_meta SET meta_value=? WHERE meta_key=? "
+            + "AND meta_value=?;";
     private static final String STATEMENT_SET_BLOG_URL =
             "UPDATE jj_blog_info SET blog_url=?;";
-
-    private ConnectionFactory factory;
+    private static final Logger logger = Logger.getLogger(
+            BlogInfoDataAccessImpl.class.getName());
 
     private static Map<String, List<String>> getKeyValuesByResultSet(
             ResultSet rs) throws SQLException {
-        Map<String, List<String>> keyValues = new HashMap<String, List<String>>();
+        Map<String, List<String>> keyValues =
+                new HashMap<String, List<String>>();
         while (rs.next()) {
             String key = rs.getString(COLUMN_BLOG_META_KEY);
             String value = rs.getString(COLUMN_BLOG_META_VALUE);
@@ -99,7 +90,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
 
     private static void addPropertiesIntoBlogInfo(
             Map<String, List<String>> keyValues, BlogInfo info) {
-        for (Entry<String, List<String>> e: keyValues.entrySet()) {
+        for (Entry<String, List<String>> e : keyValues.entrySet()) {
             String key = e.getKey();
             List<String> values = e.getValue();
             String[] strArr = values.toArray(new String[0]);
@@ -107,23 +98,8 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
         }
     }
 
-    public BlogInfoDataAccessImpl(ConnectionFactory factory) {
-        this.factory = factory;
-    }
-
-    private Connection newConnection()
-            throws JdbcDataAccessException {
-        return factory.newConnection();
-    }
-
-    private void closeConnection(Connection connection)
-            throws JdbcDataAccessException {
-        factory.closeConnection(connection);
-    }
-
-    private void rollbackConnection(Connection connection)
-            throws JdbcDataAccessException {
-        factory.rollbackConnection(connection);
+    public BlogInfoDataAccessImpl(DataSource dataSource) {
+        super(dataSource);
     }
 
     @Override
@@ -157,6 +133,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
 
             return info;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
             closeConnection(connection);
@@ -172,6 +149,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             ps.setString(1, title);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
             closeConnection(connection);
@@ -187,6 +165,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             ps.setString(1, subTitle);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
             closeConnection(connection);
@@ -201,6 +180,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             ps.setString(1, blogUrl);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
             closeConnection(connection);
@@ -218,6 +198,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             ps.setString(2, value);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
             closeConnection(connection);
@@ -233,6 +214,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             ps.setString(1, key);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
             closeConnection(connection);
@@ -255,6 +237,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             }
             return strList.toArray(new String[0]);
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
             closeConnection(connection);
@@ -273,13 +256,15 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             ps.setString(3, previousValue);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
             closeConnection(connection);
         }
     }
 
-    public void setBlogInfoMeta(String key, String[] values) throws DataAccessException {
+    public void setBlogInfoMeta(String key, String[] values)
+            throws DataAccessException {
         Connection connection = newConnection();
         try {
             connection.setAutoCommit(false);
@@ -289,7 +274,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             ps1.setString(1, key);
             ps1.executeUpdate();
 
-            for (String value: values) {
+            for (String value : values) {
                 PreparedStatement ps2 = connection.prepareStatement(
                         STATEMENT_ADD_BLOG_INFO_META);
                 ps2.setString(1, key);
@@ -299,11 +284,11 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
             // transaction ends
             connection.commit();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             rollbackConnection(connection);
             throw new DataAccessException(ex);
         } finally {
             closeConnection(connection);
         }
     }
-
 }

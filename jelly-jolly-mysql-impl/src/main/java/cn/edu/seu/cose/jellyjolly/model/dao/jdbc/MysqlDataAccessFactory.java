@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
 import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
@@ -25,6 +24,7 @@ import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
 import cn.edu.seu.cose.jellyjolly.dao.LinkDataAccess;
+import javax.sql.DataSource;
 
 /**
  *
@@ -32,47 +32,44 @@ import cn.edu.seu.cose.jellyjolly.dao.LinkDataAccess;
  */
 public abstract class MysqlDataAccessFactory implements DataAccessFactory {
 
-    private ConnectionFactory factory;
+    private DataSource dataSource;
 
-    public MysqlDataAccessFactory(ConnectionFactory factory) {
-        this.factory = factory;
+    public MysqlDataAccessFactory(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public BlogInfoDataAccess getBlogInfoDataAccess() {
-        return new BlogInfoDataAccessImpl(factory);
+        return new BlogInfoDataAccessImpl(dataSource);
     }
 
     @Override
     public BlogPostDataAccess getBlogPostDataAccess() {
-        return new BlogPostDataAccessImpl(factory, getAdminUserDataAccess(),
-                getCategoryDataAccess(), getCommentDataAccess());
+        return new BlogPostDataAccessImpl(dataSource);
     }
 
     @Override
     public CategoryDataAccess getCategoryDataAccess() {
-        return new CategoryDataAccessImpl(factory);
+        return new CategoryDataAccessImpl(dataSource);
     }
 
     @Override
     public CommentDataAccess getCommentDataAccess() {
-        return new CommentDataAccessImpl(factory);
+        return new CommentDataAccessImpl(dataSource);
     }
 
     @Override
     public LinkDataAccess getLinkDataAccess() {
-        return new LinkDataAccessImpl(factory);
+        return new LinkDataAccessImpl(dataSource);
     }
 
     @Override
     public AdminUserDataAccess getAdminUserDataAccess() {
-        return new AdminUserDataAccessImpl(factory,
-                new AdminUserMetaDataAccess(factory));
+        return new AdminUserDataAccessImpl(dataSource);
     }
 
     @Override
     public BlogPageDataAccess getBlogPageDataAccess() {
-        return new BlogPageDataAccessImpl(factory);
+        return new BlogPageDataAccessImpl(dataSource);
     }
-
 }

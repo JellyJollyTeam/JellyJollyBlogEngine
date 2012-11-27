@@ -14,70 +14,62 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.dto.BlogPage;
-import cn.edu.seu.cose.jellyjolly.dto.BlogPageBar;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPage;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPageBar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class BlogPageDataAccessImpl implements BlogPageDataAccess {
+public class BlogPageDataAccessImpl
+        extends AbstractDataAccess implements BlogPageDataAccess {
 
     private static final String COLUMN_PAGE_ID = "blog_page_id";
-
     private static final String COLUMN_PAGE_TITLE = "page_title";
-
     private static final String COLUMN_PAGE_CONTENT = "page_content";
-
     private static final String STATEMENT_GET_PAGE_TITLE_LIST =
             "SELECT page_title FROM jj_blog_pages;";
-
     private static final String STATEMENT_GET_PAGE_TITLE_MAP =
             "SELECT blog_page_id, page_title FROM jj_blog_pages;";
-
     private static final String STATEMENT_GET_PAGES =
             "SELECT * FROM jj_blog_pages;";
-
     private static final String STATEMENT_GET_PAGE_BY_ID =
             "SELECT * FROM jj_blog_pages WHERE blog_page_id=?;";
-
     private static final String STATEMENT_ADD_PAGE =
-            "INSERT INTO jj_blog_pages(page_title, page_content) VALUES (?, ?);";
-
+            "INSERT INTO jj_blog_pages(page_title, page_content) "
+            + "VALUES (?, ?);";
     private static final String STATEMENT_CHANGE_TITLE =
             "UPDATE jj_blog_pages SET page_title=? WHERE blog_page_id=?;";
-
     private static final String STATEMENT_CHANGE_CONTENT =
             "UPDATE jj_blog_pages SET page_content=? WHERE blog_page_id=?;";
-
     private static final String STATEMENT_EDIT_PAGE =
-            "UPDATE jj_blog_pages SET page_title=?, page_content=? WHERE blog_page_id=?;";
-
+            "UPDATE jj_blog_pages SET page_title=?, page_content=? "
+            + "WHERE blog_page_id=?;";
     private static final String STATEMENT_DELETE_PAGE =
             "DELETE FROM jj_blog_pages WHERE blog_page_id=?;";
-
     private static final String STATEMENT_GET_PAGE_COUNT =
             "SELECT COUNT(1) FROM jj_blog_pages;";
+    private static final Logger logger = Logger.getLogger(
+            BlogPageDataAccessImpl.class.getName());
 
-    private ConnectionFactory factory;
-
-    private static BlogPage getPageByResultSet(ResultSet rs) throws SQLException {
+    private static BlogPage getPageByResultSet(ResultSet rs)
+            throws SQLException {
         int id = rs.getInt(COLUMN_PAGE_ID);
-        String title= rs.getString(COLUMN_PAGE_TITLE);
+        String title = rs.getString(COLUMN_PAGE_TITLE);
         String content = rs.getString(COLUMN_PAGE_CONTENT);
         BlogPage page = new BlogPage();
         page.setBlogPageId(id);
@@ -86,12 +78,12 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
         return page;
     }
 
-    public BlogPageDataAccessImpl(ConnectionFactory factory) {
-        this.factory = factory;
+    public BlogPageDataAccessImpl(DataSource dataSource) {
+        super(dataSource);
     }
 
     public List<String> getPageTitleList() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_PAGE_TITLE_LIST);
@@ -103,14 +95,15 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
             }
             return titleList;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public List<BlogPageBar> getPageBarList() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_PAGE_TITLE_MAP);
@@ -126,14 +119,15 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
             }
             return barList;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public List<BlogPage> getAllPages() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_PAGES);
@@ -145,14 +139,15 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
             }
             return pageList;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public BlogPage getPage(int pageId) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_PAGE_BY_ID);
@@ -164,9 +159,10 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
             BlogPage page = getPageByResultSet(rs);
             return page;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -175,7 +171,7 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
     }
 
     public int addNewPage(String title, String content) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_ADD_PAGE, Statement.RETURN_GENERATED_KEYS);
@@ -185,14 +181,15 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
             ResultSet rs = ps.getGeneratedKeys();
             return (rs.next()) ? rs.getInt(1) : -1;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public void changeTitle(int pageId, String title) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_CHANGE_TITLE);
@@ -200,14 +197,15 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
             ps.setInt(2, pageId);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public void changeContent(int pageId, String content) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_CHANGE_CONTENT);
@@ -215,14 +213,15 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
             ps.setInt(2, pageId);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public void editPage(BlogPage page) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_EDIT_PAGE);
@@ -231,28 +230,30 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
             ps.setInt(3, page.getBlogPageId());
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public void deletePage(int pageId) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_DELETE_PAGE);
             ps.setInt(1, pageId);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public int getPageCount() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_PAGE_COUNT);
@@ -263,10 +264,10 @@ public class BlogPageDataAccessImpl implements BlogPageDataAccess {
 
             return rs.getInt(1);
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
-
 }

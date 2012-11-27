@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,74 +29,56 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.sql.DataSource;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class AdminUserDataAccessImpl implements AdminUserDataAccess {
+public class AdminUserDataAccessImpl
+        extends AbstractDataAccess implements AdminUserDataAccess {
 
     private static final String COLUMN_ID = "user_Id";
-
     private static final String COLUMN_USERNAME = "user_name";
-
     private static final String COLUMN_PASSWORD = "user_pass";
-
     private static final String COLUMN_EMAIL = "user_email";
-
     private static final String COLUMN_HOMEPAGE = "user_home_page_url";
-
     private static final String COLUMN_DISPLAY_NAME = "display_name";
-
     private static final String COLUMN_REGISTER_TIME = "register_time";
-
     private static final String COLUMN_LAST_LOGIN_TIME = "last_login_time";
-
     private static final String STATEMENT_CONFIRM =
             "SELECT COUNT(*) FROM jj_users "
             + "WHERE user_name=? AND user_pass=PASSWORD(?) LIMIT 1;";
-
     private static final String STATEMENT_GET_USER =
-            "SELECT * FROM jj_users WHERE user_name=? AND user_pass=PASSWORD(?) LIMIT 1;";
-
+            "SELECT * FROM jj_users WHERE user_name=? "
+            + "AND user_pass=PASSWORD(?) LIMIT 1;";
     private static final String STATEMENT_GET_USER_BY_ID =
             "SELECT * FROM jj_users WHERE user_id=? LIMIT 1;";
-
     private static final String STATEMENT_GET_ALL_USERS =
             "SELECT * FROM jj_users LIMIT 1024;";
-
     private static final String STATEMENT_ADD_NEW_USER =
-            "INSERT INTO jj_users(user_name, user_pass, user_email, user_home_page_url, "
-            + "display_name, register_time) VALUES (?, PASSWORD(?), ?, ?, ?, ?);";
-
+            "INSERT INTO jj_users(user_name, user_pass, user_email, "
+            + "user_home_page_url, display_name, register_time) "
+            + "VALUES (?, PASSWORD(?), ?, ?, ?, ?);";
     private static final String STATEMENT_ADD_NEW_USER_WITHOUT_HOMEPAGE =
             "INSERT INTO jj_users(user_name, user_pass, user_email,  "
             + "display_name, register_time) VALUES (?, PASSWORD(?), ?, ?, ?);";
-
     private static final String STATEMENT_UPDATE_USER =
-            "UPDATE jj_users SET user_name=?, user_pass=PASSWORD(?), user_email=?, "
-            + "user_home_page_url=?, display_name=? WHERE user_id=?;";
-
+            "UPDATE jj_users SET user_name=?, user_pass=PASSWORD(?), "
+            + "user_email=?, user_home_page_url=?, display_name=? "
+            + "WHERE user_id=?;";
     private static final String STATEMENT_USERNAME_USED =
             "SELECT COUNT(*) FROM jj_users WHERE user_name=? LIMIT 1;";
-
     private static final String STATEMENT_CHANGE_USERNAME =
             "UPDATE jj_users SET user_name=? WHERE user_id=?;";
-
     private static final String STATEMENT_CHANGE_PASSWORD =
             "UPDATE jj_users SET user_pass=PASSWORD(?) WHERE user_id=?;";
-
     private static final String STATEMENT_SET_LAST_LOGIN_TIME =
             "UPDATE jj_users SET last_login_time=? WHERE user_id=?;";
-
     private static final String STATEMENT_DELETE_USER_BY_ID =
             "DELETE FROM jj_users WHERE user_id=?;";
-
     private static final String STATEMENT_DELETE_USER_FROM_BLOG_POST =
             "DELETE FROM jj_blog_posts WHERE author_user_id=?;";
-
-    private ConnectionFactory factory;
-
     private AdminUserMetaDataAccess adminUserMetaDataAccess;
 
     private AdminUser getAdminUserByResultSet(ResultSet rs)
@@ -123,25 +104,9 @@ public class AdminUserDataAccessImpl implements AdminUserDataAccess {
         return user;
     }
 
-    public AdminUserDataAccessImpl(ConnectionFactory factory,
-            AdminUserMetaDataAccess adminUserMetaDataAccess) {
-        this.factory = factory;
-        this.adminUserMetaDataAccess = adminUserMetaDataAccess;
-    }
-
-    private Connection newConnection()
-            throws JdbcDataAccessException {
-        return factory.newConnection();
-    }
-
-    private void closeConnection(Connection connection)
-            throws JdbcDataAccessException {
-        factory.closeConnection(connection);
-    }
-
-    private void rollbackConnection(Connection connection)
-            throws JdbcDataAccessException {
-        factory.rollbackConnection(connection);
+    public AdminUserDataAccessImpl(DataSource dataSource) {
+        super(dataSource);
+        adminUserMetaDataAccess = new AdminUserMetaDataAccess(dataSource);
     }
 
     @Override
@@ -149,8 +114,9 @@ public class AdminUserDataAccessImpl implements AdminUserDataAccess {
             throws DataAccessException {
         Connection connection = null;
         try {
-            connection = factory.newConnection();
-            PreparedStatement ps = connection.prepareStatement(STATEMENT_CONFIRM);
+            connection = newConnection();
+            PreparedStatement ps = connection.prepareStatement(
+                    STATEMENT_CONFIRM);
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
@@ -173,7 +139,8 @@ public class AdminUserDataAccessImpl implements AdminUserDataAccess {
             throws DataAccessException {
         Connection connection = newConnection();
         try {
-            PreparedStatement ps = connection.prepareStatement(STATEMENT_GET_USER);
+            PreparedStatement ps = connection.prepareStatement(
+                    STATEMENT_GET_USER);
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
@@ -242,10 +209,11 @@ public class AdminUserDataAccessImpl implements AdminUserDataAccess {
     @Override
     public AdminUser addNewUser(AdminUser user) throws DataAccessException {
         return (user.getHomePageUrl() == null)
-                ? addNewUser(user.getUsername(), user.getPassword(), user.getEmail(),
-                    user.getDisplayName(), user.getRegisterTime())
-                : addNewUser(user.getUsername(), user.getPassword(), user.getEmail(),
-                    user.getHomePageUrl(), user.getDisplayName(), user.getRegisterTime());
+                ? addNewUser(user.getUsername(), user.getPassword(),
+                user.getEmail(), user.getDisplayName(), user.getRegisterTime())
+                : addNewUser(user.getUsername(), user.getPassword(),
+                user.getEmail(), user.getHomePageUrl(), user.getDisplayName(),
+                user.getRegisterTime());
     }
 
     @Override
@@ -324,7 +292,8 @@ public class AdminUserDataAccessImpl implements AdminUserDataAccess {
         Connection connection = null;
         try {
             connection = newConnection();
-            PreparedStatement ps = connection.prepareStatement(STATEMENT_UPDATE_USER);
+            PreparedStatement ps = connection.prepareStatement(
+                    STATEMENT_UPDATE_USER);
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword());
             ps.setString(3, user.getEmail());
@@ -423,7 +392,8 @@ public class AdminUserDataAccessImpl implements AdminUserDataAccess {
             ps1.setLong(1, userId);
             ps1.executeUpdate();
 
-            adminUserMetaDataAccess.deleteUserPropertiesTransaction(connection, userId);
+            adminUserMetaDataAccess.deleteUserPropertiesTransaction(connection,
+                    userId);
             // transaction ends
             connection.commit();
         } catch (SQLException ex) {
@@ -437,20 +407,22 @@ public class AdminUserDataAccessImpl implements AdminUserDataAccess {
         }
     }
 
-    public Map<String, List<String>> getUserProperties(long userId) throws DataAccessException {
+    public Map<String, List<String>> getUserProperties(long userId)
+            throws DataAccessException {
         return adminUserMetaDataAccess.getUserPropertiesMap(userId);
     }
 
-    public void addUserProperty(long userId, String key, String[] values) throws DataAccessException {
+    public void addUserProperty(long userId, String key, String[] values)
+            throws DataAccessException {
         adminUserMetaDataAccess.putUserProperties(userId, key, values);
     }
 
-    public void deleteUserProperty(long userId, String key) throws DataAccessException {
+    public void deleteUserProperty(long userId, String key)
+            throws DataAccessException {
         adminUserMetaDataAccess.deleteUserProperty(userId, key);
     }
 
     public void clearUserProperty(long userId) throws DataAccessException {
         adminUserMetaDataAccess.clearUserProperties(userId);
     }
-
 }

@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,115 +28,94 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class CommentDataAccessImpl implements CommentDataAccess {
+public class CommentDataAccessImpl
+        extends AbstractDataAccess implements CommentDataAccess {
 
     private static final CommentOrderStrategy DEFAULT_STRATEGY =
             CommentOrderStrategy.ORDERED_BY_DATE_ASC;
-
     private static final String COLUMN_COMMENT_ID = "comment_id";
-
     private static final String COLUMN_PARENT_COMMENT_ID = "parent_comment_id";
-
     private static final String COLUMN_POST_ID = "blog_post_id";
-
     private static final String COLUMN_USER_ID = "comment_user_author_id";
-
     private static final String COLUMN_AUTHOR_NAME = "comment_author_name";
-
     private static final String COLUMN_AUTHOR_EMAIL = "comment_author_email";
-
     private static final String COLUMN_AUTHOR_HOME_PAGE =
             "comment_author_home_page_url";
-
     private static final String COLUMN_DATE = "comment_date";
-
     private static final String COLUMN_CONTENT = "comment_content";
-
     private static final String STATEMENT_GET_COMMENTS =
             "SELECT * FROM jj_blog_comments;";
-
     private static final String STATEMENT_GET_RECENT_COMMENTS =
             "SELECT * FROM jj_blog_comments ORDER BY comment_date DESC LIMIT ?";
-
     private static final String STATEMENT_GET_COMMENTS_BY_LIMIT =
             "SELECT * FROM jj_blog_comments LIMIT ?, ?;";
-
     private static final String STATEMENT_GET_COMMENT_BY_ID =
             "SELECT * FROM jj_blog_comments WHERE comment_id=?;";
-
     private static final String STATEMENT_GET_COMMENT_NUM =
             "SELECT COUNT(1) FROM jj_blog_comments;";
-
     private static final String STATEMENT_GET_COMMENTS_BY_PARENT_ID =
             "SELECT * FROM jj_blog_comments WHERE parent_comment_id=?;";
-
     private static final String STATEMENT_GET_COMMENTS_BY_PARENT_ID_DATE_ASC =
             "SELECT * FROM jj_blog_comments WHERE parent_comment_id=? "
             + "ORDER BY comment_date ASC;";
-
     private static final String STATEMENT_GET_COMMENTS_BY_PARENT_ID_DATE_DESC =
             "SELECT * FROM jj_blog_comments WHERE parent_comment_id=? "
             + "ORDER BY comment_date DESC;";
-
     private static final String STATEMENT_GET_COMMENTS_BY_POST_ID =
             "SELECT * FROM jj_blog_comments WHERE blog_post_id=?;";
-
     private static final String STATEMENT_GET_COMMENTS_BY_POST_ID_DATE_ASC =
             "SELECT * FROM jj_blog_comments WHERE blog_post_id=? "
             + "ORDER BY comment_date ASC;";
-
     private static final String STATEMENT_GET_COMMENTS_BY_POST_ID_DATE_DESC =
             "SELECT * FROM jj_blog_comments WHERE blog_post_id=? "
             + "ORDER BY comment_date DESC;";
-
     private static final String STATEMENT_UPDATE_COMMENT =
             "UPDATE jj_blog_comments SET comment_content=? WHERE comment_id=?";
-
     private static final String STATEMENT_ADD_COMMENT =
             "INSERT INTO jj_blog_comments(parent_comment_id, blog_post_id, "
             + "comment_author_name, comment_author_email, "
             + "comment_author_home_page_url, comment_date, comment_content) "
             + "VALUES (?, ?, ?, ?, ?, ?, ?);";
-
     private static final String STATEMENT_ADD_COMMENT_WITHOUT_PARENT =
             "INSERT INTO jj_blog_comments(parent_comment_id, blog_post_id, "
             + "comment_author_name, comment_author_email, "
             + "comment_author_home_page_url, comment_date, comment_content) "
             + "VALUES (0, ?, ?, ?, ?, ?, ?);";
-
     private static final String STATEMENT_ADD_COMMENT_BY_USER_ID =
             "INSERT INTO jj_blog_comments("
             + "parent_comment_id, blog_post_id, comment_author_name, "
-            + "comment_author_email, comment_author_home_page_url, comment_date, "
-            + "comment_content) SELECT ?, ?, display_name as comment_author_name, "
+            + "comment_author_email, comment_author_home_page_url, "
+            + "comment_date, comment_content) SELECT ?, ?, "
+            + "display_name as comment_author_name, "
             + "user_email as comment_author_email, "
             + "user_home_page_url as comment_author_home_page_url, ?, ? "
             + "FROM jj_users WHERE user_id=?;";
-
-    private static final String STATEMENT_ADD_COMMENT_BY_USER_ID_WITHOUT_PARENT =
+    private static final String STATEMENT_ADD_CMMT_BY_USER_ID_WITHOUT_PARENT =
             "INSERT INTO jj_blog_comments("
             + "parent_comment_id, blog_post_id, comment_author_name, "
-            + "comment_author_email, comment_author_home_page_url, comment_date, "
-            + "comment_content) SELECT 0, ?, display_name as comment_author_name, "
+            + "comment_author_email, comment_author_home_page_url, "
+            + "comment_date, comment_content) SELECT 0, ?, "
+            + "display_name as comment_author_name, "
             + "user_email as comment_author_email, "
             + "user_home_page_url as comment_author_home_page_url, ?, ? "
             + "FROM jj_users WHERE user_id=?;";
-
     private static final String STATEMENT_DELETE_COMMENT_BY_ID =
             "DELETE FROM jj_blog_comments WHERE comment_id=?;";
-
     private static final String STATEMENT_DELETE_COMMENTS_BY_POST_ID =
             "DELETE FROM jj_blog_comments WHERE blog_post_id=?;";
+    private static final Logger logger = Logger.getLogger(
+            CommentDataAccessImpl.class.getName());
 
-    private ConnectionFactory factory;
-
-    public CommentDataAccessImpl(ConnectionFactory factory) {
-        this.factory = factory;
+    public CommentDataAccessImpl(DataSource dataSource) {
+        super(dataSource);
     }
 
     private Comment getCommentByResultSet(ResultSet rs) throws SQLException {
@@ -183,21 +161,23 @@ public class CommentDataAccessImpl implements CommentDataAccess {
     }
 
     public List<Comment> getComments() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
-            PreparedStatement ps = connection.prepareStatement(STATEMENT_GET_COMMENTS);
+            PreparedStatement ps = connection.prepareStatement(
+                    STATEMENT_GET_COMMENTS);
             ResultSet rs = ps.executeQuery();
             return getCommentsByResultSet(rs);
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public List<Comment> getComments(long offset, long limit)
             throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_COMMENTS_BY_LIMIT);
@@ -206,16 +186,17 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             ResultSet rs = ps.executeQuery();
             return getCommentsByResultSet(rs);
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public List<Comment> getRecentComments(long number)
             throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_RECENT_COMMENTS);
@@ -223,15 +204,16 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             ResultSet rs = ps.executeQuery();
             return getCommentsByResultSet(rs);
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public Comment getCommentById(long commentId) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_COMMENT_BY_ID);
@@ -244,9 +226,10 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             Comment comment = getCommentByResultSet(rs);
             return comment;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -259,7 +242,7 @@ public class CommentDataAccessImpl implements CommentDataAccess {
     @Override
     public List<Comment> getCommentsByParentCommentId(long parentCommentId,
             CommentOrderStrategy strategy) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             String statement;
             switch (strategy) {
@@ -278,9 +261,10 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             ResultSet rs = ps.executeQuery();
             return getCommentsByResultSet(rs);
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -293,7 +277,7 @@ public class CommentDataAccessImpl implements CommentDataAccess {
     @Override
     public List<Comment> getCommentsByPostId(long postId,
             CommentOrderStrategy strategy) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             String statement;
             switch (strategy) {
@@ -312,30 +296,32 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             ResultSet rs = ps.executeQuery();
             return getCommentsByResultSet(rs);
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     public long getCommentNumber() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_COMMENT_NUM);
             ResultSet rs = ps.executeQuery();
             return (!rs.next()) ? 0 : rs.getLong(1);
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public void updateComment(long commentId, String content)
             throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_UPDATE_COMMENT);
@@ -343,9 +329,10 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             ps.setLong(2, commentId);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -357,10 +344,10 @@ public class CommentDataAccessImpl implements CommentDataAccess {
     }
 
     @Override
-    public long addNewComment(long postId, String authorName, String authorEmail,
-            String authorHomePageURL, String content, long parentCommentId, Date date)
-            throws DataAccessException {
-        Connection connection = factory.newConnection();
+    public long addNewComment(long postId, String authorName,
+            String authorEmail, String authorHomePageURL, String content,
+            long parentCommentId, Date date) throws DataAccessException {
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_ADD_COMMENT,
@@ -387,19 +374,20 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             long id = rs.getLong(1);
             return id;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
-    public long addNewComment(long postId, long userId, String content, Date date)
-            throws DataAccessException {
-        Connection connection = factory.newConnection();
+    public long addNewComment(long postId, long userId, String content,
+            Date date) throws DataAccessException {
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
-                    STATEMENT_ADD_COMMENT_BY_USER_ID_WITHOUT_PARENT,
+                    STATEMENT_ADD_CMMT_BY_USER_ID_WITHOUT_PARENT,
                     Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, postId);
             ps.setTimestamp(2, (date != null)
@@ -420,16 +408,17 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             long id = rs.getLong(1);
             return id;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public long addNewComment(long postId, long userId, String content,
             long parentCommentId, Date date) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_ADD_COMMENT_BY_USER_ID,
@@ -454,17 +443,18 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             long id = rs.getLong(1);
             return id;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
-    public long addNewComment(long postId, String authorName, String authorEmail,
-            String authorHomePageURL, String content, Date date)
-            throws DataAccessException {
-        Connection connection = factory.newConnection();
+    public long addNewComment(long postId, String authorName,
+            String authorEmail, String authorHomePageURL, String content,
+            Date date) throws DataAccessException {
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_ADD_COMMENT_WITHOUT_PARENT,
@@ -487,36 +477,43 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             long id = rs.getLong(1);
             return id;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public void deleteCommentById(long commentId) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_DELETE_COMMENT_BY_ID);
             ps.setLong(1, commentId);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
+        } finally {
+            closeConnection(connection);
         }
     }
 
     @Override
-    public void deleteCommentsByPostId(long postId) throws DataAccessException {
-        Connection connection = factory.newConnection();
+    public void deleteCommentsByPostId(long postId)
+            throws DataAccessException {
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_DELETE_COMMENTS_BY_POST_ID);
             ps.setLong(1, postId);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
+        } finally {
+            closeConnection(connection);
         }
     }
-
 }

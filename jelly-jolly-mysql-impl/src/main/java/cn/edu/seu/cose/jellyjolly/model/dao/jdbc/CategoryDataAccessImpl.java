@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,51 +26,43 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class CategoryDataAccessImpl implements CategoryDataAccess {
+public class CategoryDataAccessImpl
+        extends AbstractDataAccess implements CategoryDataAccess {
 
     private static final CategoryOrderStrategy DEFAULT_STRATEGY =
             CategoryOrderStrategy.ORDERED_BY_NAME_DESC;
-
     private static final String COLUMN_CATEGORY_ID = "category_id";
-
     private static final String COLUMN_CATEGORY_NAME = "name";
-
     private static final String STATEMENT_GET_CATEGORY_BY_ID =
             "SELECT * FROM jj_categories WHERE category_id=?;";
-
     private static final String STATEMENT_GET_CATEGORIES =
             "SELECT * FROM jj_categories;";
-
     private static final String STATEMENT_GET_CATEGORIES_ORDERED_BY_NAME_ASC =
             "SELECT * FROM jj_categories ORDER BY name ASC;";
-
     private static final String STATEMENT_GET_CATEGORIES_ORDERED_BY_NAME_DESC =
             "SELECT * FROM jj_categories ORDER BY name DESC;";
-
     private static final String STATEMENT_GET_CATEGORIES_ORDERED_BY_ID_ASC =
             "SELECT * FROM jj_categories ORDER BY category_id ASC;";
-
     private static final String STATEMENT_GET_CATEGORIES_ORDERED_BY_ID_DESC =
             "SELECT * FROM jj_categories ORDER BY category_id DESC;";
-
     private static final String STATEMENT_CREATE_CATEGORY =
             "INSERT INTO jj_categories(name) VALUES (?);";
-
     private static final String STATEMENT_UPDATE_CATEGORY =
             "UPDATE jj_categories SET name=? WHERE category_id=?;";
-
     private static final String STATEMENT_DELETE_CATEGORY_BY_ID =
             "DELETE FROM jj_categories WHERE category_id=?;";
-
     private static final String STATEMENT_GET_CATEGORY_NUM =
             "SELECT COUNT(1) FROM jj_categories;";
-
-    private ConnectionFactory factory;
+    private static final Logger logger = Logger.getLogger(
+            CategoryDataAccessImpl.class.getName());
 
     private static Category getCategoryByResultSet(ResultSet rs)
             throws SQLException {
@@ -83,13 +74,14 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
         return category;
     }
 
-    public CategoryDataAccessImpl(ConnectionFactory factory) {
-        this.factory = factory;
+    public CategoryDataAccessImpl(DataSource dataSource) {
+        super(dataSource);
     }
 
     @Override
-    public Category getCategoryById(int categoryId) throws DataAccessException {
-        Connection connection = factory.newConnection();
+    public Category getCategoryById(int categoryId)
+            throws DataAccessException {
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_CATEGORY_BY_ID);
@@ -102,9 +94,10 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
             Category category = getCategoryByResultSet(rs);
             return category;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -114,9 +107,9 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
     }
 
     @Override
-    public List<Category> getAllCategories(final CategoryOrderStrategy strategy)
-            throws DataAccessException {
-        Connection connection = factory.newConnection();
+    public List<Category> getAllCategories(
+            final CategoryOrderStrategy strategy) throws DataAccessException {
+        Connection connection = newConnection();
         try {
             String statement;
             switch (strategy) {
@@ -145,18 +138,21 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
             }
             return categoryList;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
-    public Category createNewCategory(String name) throws DataAccessException {
-        Connection connection = factory.newConnection();
+    public Category createNewCategory(String name)
+            throws DataAccessException {
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
-                    STATEMENT_CREATE_CATEGORY, Statement.RETURN_GENERATED_KEYS);
+                    STATEMENT_CREATE_CATEGORY,
+                    Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, name);
             int rowCount = ps.executeUpdate();
 
@@ -175,16 +171,17 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
             category.setName(name);
             return category;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
     @Override
     public void updateCategoryNameById(int category, String name)
             throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_UPDATE_CATEGORY);
@@ -192,9 +189,10 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
             ps.setInt(2, category);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -205,16 +203,17 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
 
     @Override
     public void deleteCategoryById(int category) throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_DELETE_CATEGORY_BY_ID);
             ps.setInt(1, category);
             ps.executeUpdate();
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -224,17 +223,17 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
     }
 
     public int getCategoryNumber() throws DataAccessException {
-        Connection connection = factory.newConnection();
+        Connection connection = newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
                     STATEMENT_GET_CATEGORY_NUM);
             ResultSet rs = ps.executeQuery();
             return (rs.next()) ? rs.getInt(1) : 0;
         } catch (SQLException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             throw new JdbcDataAccessException(ex);
         } finally {
-            factory.closeConnection(connection);
+            closeConnection(connection);
         }
     }
-
 }
