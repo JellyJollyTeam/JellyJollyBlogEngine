@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.dao;
 
 import java.lang.reflect.Constructor;
@@ -32,13 +31,11 @@ import java.util.logging.Logger;
 public class DataAccessFactoryManager {
 
     private static final String NA_FACTORY_HINT = "No Available Factory";
-
-    private static final String REGISTER_FACTORY_HINT = "Registering factory: ";
-
-    private static final String REGISTER_FAILURE_HINT = "Fail to register factory: ";
-
+    private static final String REGISTER_FACTORY_HINT =
+            "Registering factory: ";
+    private static final String REGISTER_FAILURE_HINT =
+            "Fail to register factory: ";
     private static DataAccessFactoryManager managerInstance;
-
     private Map<String, Class<? extends DataAccessFactory>> factoryInstances;
 
     private static String getRegisterHint(String factoryClassName) {
@@ -87,7 +84,8 @@ public class DataAccessFactoryManager {
 
             Logger.getLogger(DataAccessFactoryManager.class.getName())
                     .log(Level.INFO, getRegisterHint(className));
-            factoryInstances.put(name, (Class<?  extends DataAccessFactory>) cls);
+            factoryInstances.put(name,
+                    (Class<? extends DataAccessFactory>) cls);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DataAccessFactoryManager.class.getName())
                     .log(Level.SEVERE, ex.getMessage(), ex);
@@ -137,5 +135,4 @@ public class DataAccessFactoryManager {
             return null;
         }
     }
-
 }

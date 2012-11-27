@@ -47,5 +47,4 @@ public interface BlogPageDataAccess {
     void editPage(BlogPage page) throws DataAccessException;
 
     void deletePage(int pageId) throws DataAccessException;
-
 }

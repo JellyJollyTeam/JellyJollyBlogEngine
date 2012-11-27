@@ -38,9 +38,9 @@ public interface BlogInfoDataAccess {
 
     String[] getBlogInfoMeta(String key) throws DataAccessException;
 
-    void setBlogInfoMeta(String key, String previousValue, String currentValue)
+    void setBlogInfoMeta(String key, String previousValue,
+            String currentValue) throws DataAccessException;
+
+    void setBlogInfoMeta(String key, String[] values)
             throws DataAccessException;
-
-    void setBlogInfoMeta(String key, String[] values) throws DataAccessException;
-
 }

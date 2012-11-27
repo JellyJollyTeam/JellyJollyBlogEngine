@@ -27,6 +27,7 @@ import java.util.List;
 public interface CommentDataAccess {
 
     public static enum CommentOrderStrategy {
+
         ORDERED_BY_DATE_ASC, ORDERED_BY_DATE_DESC
     }
 
@@ -34,7 +35,8 @@ public interface CommentDataAccess {
 
     List<Comment> getComments() throws DataAccessException;
 
-    List<Comment> getComments(long offset, long limit) throws DataAccessException;
+    List<Comment> getComments(long offset, long limit)
+            throws DataAccessException;
 
     List<Comment> getRecentComments(long number) throws DataAccessException;
 
@@ -53,7 +55,8 @@ public interface CommentDataAccess {
 
     long getCommentNumber() throws DataAccessException;
 
-    void updateComment(long commentId, String content) throws DataAccessException;
+    void updateComment(long commentId, String content)
+            throws DataAccessException;
 
     long addNewComment(Comment comment) throws DataAccessException;
 
@@ -64,7 +67,8 @@ public interface CommentDataAccess {
             long parentCommentId, Date date) throws DataAccessException;
 
     long addNewComment(long postId, String authorName, String authorEmail,
-            String authorHomePageURL, String content, Date date) throws DataAccessException;
+            String authorHomePageURL, String content, Date date)
+            throws DataAccessException;
 
     long addNewComment(long postId, String authorName, String authorEmail,
             String authorHomePageURL, String content,
@@ -74,5 +78,4 @@ public interface CommentDataAccess {
 
     void deleteCommentsByPostId(long postId)
             throws DataAccessException;
-
 }

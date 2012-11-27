@@ -16,8 +16,8 @@
  */
 package cn.edu.seu.cose.jellyjolly.dao;
 
-import cn.edu.seu.cose.jellyjolly.dto.MonthArchive;
 import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
+import cn.edu.seu.cose.jellyjolly.dto.MonthArchive;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +28,7 @@ import java.util.List;
 public interface BlogPostDataAccess {
 
     public static enum BlogPostOrderStrategy {
+
         ORDERED_BY_DATE_ASC, ORDERED_BY_DATE_DESC
     }
 
@@ -45,7 +46,8 @@ public interface BlogPostDataAccess {
 
     long getPostNumber(String keyword) throws DataAccessException;
 
-    List<BlogPost> getPosts(long offset, long limit) throws DataAccessException;
+    List<BlogPost> getPosts(long offset, long limit)
+            throws DataAccessException;
 
     List<BlogPost> getPosts(long offset, long limit,
             BlogPostOrderStrategy strategy) throws DataAccessException;
@@ -68,11 +70,12 @@ public interface BlogPostDataAccess {
     List<BlogPost> getPostsByUserId(long userId, long offset, long limit,
             BlogPostOrderStrategy strategy) throws DataAccessException;
 
-    List<BlogPost> getPostsByCategoryId(int categoryId, long offset, long limit)
-            throws DataAccessException;
+    List<BlogPost> getPostsByCategoryId(int categoryId, long offset,
+            long limit) throws DataAccessException;
 
-    List<BlogPost> getPostsByCategoryId(int categoryId, long offset, long limit,
-            BlogPostOrderStrategy strategy) throws DataAccessException;
+    List<BlogPost> getPostsByCategoryId(int categoryId, long offset,
+            long limit, BlogPostOrderStrategy strategy)
+            throws DataAccessException;
 
     List<BlogPost> getPostsByMonthlyArchive(int year, int month, long offset,
             long limit) throws DataAccessException;
@@ -80,23 +83,26 @@ public interface BlogPostDataAccess {
     String[] getProperty(long postId, String key) throws DataAccessException;
 
     List<BlogPost> getPostsByMonthlyArchive(int year, int month, long offset,
-            long limit, BlogPostOrderStrategy strategy) throws DataAccessException;
+            long limit, BlogPostOrderStrategy strategy)
+            throws DataAccessException;
 
     List<MonthArchive> getMonthlyArchiveList() throws DataAccessException;
 
     long createNewPost(BlogPost post) throws DataAccessException;
 
-    long createNewPost(long authorUserId, int categoryId, Date date, String title,
-            String content) throws DataAccessException;
+    long createNewPost(long authorUserId, int categoryId, Date date,
+            String title, String content) throws DataAccessException;
 
     void setProperty(long postId, String key, String[] values)
             throws DataAccessException;
 
     void updatePost(BlogPost post) throws DataAccessException;
 
-    void updatePostTitle(long postId, String title) throws DataAccessException;
+    void updatePostTitle(long postId, String title)
+            throws DataAccessException;
 
-    void updatePostContent(long postId, String content) throws DataAccessException;
+    void updatePostContent(long postId, String content)
+            throws DataAccessException;
 
     void updatePostCategory(long postId, int categoryId)
             throws DataAccessException;
@@ -106,5 +112,4 @@ public interface BlogPostDataAccess {
     void deleteProperty(long postId, String key) throws DataAccessException;
 
     void clearPorperties(long postId) throws DataAccessException;
-
 }

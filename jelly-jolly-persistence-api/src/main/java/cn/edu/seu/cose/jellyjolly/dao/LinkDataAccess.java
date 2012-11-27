@@ -26,6 +26,7 @@ import java.util.List;
 public interface LinkDataAccess {
 
     public static enum LinkOrderStrategy {
+
         ORDERED_BY_NAME_ASC, ORDERED_BY_NAME_DESC,
         ORDERED_BY_ID_ASC, ORDERED_BY_ID_DESC
     }
@@ -46,5 +47,4 @@ public interface LinkDataAccess {
     void updateLink(Link link) throws DataAccessException;
 
     void deleteLink(long linkId) throws DataAccessException;
-
 }

@@ -35,5 +35,4 @@ public interface DataAccessFactory {
     AdminUserDataAccess getAdminUserDataAccess();
 
     BlogPageDataAccess getBlogPageDataAccess();
-
 }

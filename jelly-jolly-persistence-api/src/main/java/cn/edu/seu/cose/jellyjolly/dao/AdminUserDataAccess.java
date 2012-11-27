@@ -57,14 +57,16 @@ public interface AdminUserDataAccess {
     boolean changeUserName(long userId, String username)
             throws DataAccessException;
 
-    void changePassword(long userId, String password) throws DataAccessException;
+    void changePassword(long userId, String password)
+            throws DataAccessException;
 
-    void setLastLoginTime(long userId, Date date) throws DataAccessException;
+    void setLastLoginTime(long userId, Date date)
+            throws DataAccessException;
 
     void deleteUser(long userId) throws DataAccessException;
 
-    void deleteUserProperty(long userId, String key) throws DataAccessException;
+    void deleteUserProperty(long userId, String key)
+            throws DataAccessException;
 
     void clearUserProperty(long userId) throws DataAccessException;
-
 }

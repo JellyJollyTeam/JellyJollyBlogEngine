@@ -26,6 +26,7 @@ import java.util.List;
 public interface CategoryDataAccess {
 
     public static enum CategoryOrderStrategy {
+
         ORDERED_BY_NAME_ASC, ORDERED_BY_NAME_DESC,
         ORDERED_BY_ID_ASC, ORDERED_BY_ID_DESC
     }
@@ -49,5 +50,4 @@ public interface CategoryDataAccess {
     void deleteCategoryById(int categoryId) throws DataAccessException;
 
     void deleteCategory(Category category) throws DataAccessException;
-
 }

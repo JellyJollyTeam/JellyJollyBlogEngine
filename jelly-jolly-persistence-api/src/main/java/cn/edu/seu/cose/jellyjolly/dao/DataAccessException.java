@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.dao;
 
 /**
@@ -38,5 +37,4 @@ public class DataAccessException extends Exception {
     public DataAccessException(String hint, Exception e) {
         super(hint, e);
     }
-
 }
