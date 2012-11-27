@@ -4,3 +4,9 @@
 *.jar
 *.war
 *.ear
+/jelly-jolly-persistence-api/target/
+/jelly-jolly-plugin-api/target/
+/jelly-jolly-core/target/
+/jelly-jolly-mysql-impl/target/
+/jelly-jolly-mysql-dist/target/
+/jelly-jolly-sae-dist/target/
