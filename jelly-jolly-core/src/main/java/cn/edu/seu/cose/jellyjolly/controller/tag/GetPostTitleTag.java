@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.tag;
 
-import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
