@@ -38,7 +38,7 @@ import javax.sql.DataSource;
 public class AdminUserDataAccessImpl
         extends AbstractDataAccess implements AdminUserDataAccess {
 
-    private static final String COLUMN_ID = "user_Id";
+    private static final String COLUMN_ID = "user_id";
     private static final String COLUMN_USERNAME = "user_name";
     private static final String COLUMN_PASSWORD = "user_pass";
     private static final String COLUMN_EMAIL = "user_email";
