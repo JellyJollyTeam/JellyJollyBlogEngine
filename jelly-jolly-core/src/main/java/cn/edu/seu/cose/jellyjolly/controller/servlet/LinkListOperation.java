@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Link;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
-import cn.edu.seu.cose.jellyjolly.model.dao.LinkDataAccess;
+import cn.edu.seu.cose.jellyjolly.dto.Link;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dao.LinkDataAccess;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -39,48 +39,48 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "LinkListOperation", urlPatterns = {"/admin/link"})
 public class LinkListOperation extends HttpServlet {
-    
+
     private static final String PARAM_OPERATION = "op";
-    
+
     private static final String PARAM_TITLE = "title";
-    
+
     private static final String PARAM_IMAGE = "image";
-    
+
     private static final String PARAM_URL = "url";
-    
+
     private static final String PARAM_LINK_ID = "linkid";
-    
+
     private static final String OP_ADD = "add";
-    
+
     private static final String OP_EDIT = "edit";
-    
+
     private static final String OP_DELETE = "del";
-    
+
     private static final String LINK_PAGE_URL = "./links.jsp";
-    
+
     private static final Logger logger = Logger.getLogger(
             LinkListOperation.class.getName());
-    
+
     private LinkDataAccess linkDao;
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         linkDao = factory.getLinkDataAccess();
     }
-        
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         doPost(request, response);
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String operation = request.getParameter(PARAM_OPERATION);
-        
+
         if (OP_ADD.equalsIgnoreCase(operation)) {
             add(request, response);
             return;
@@ -93,10 +93,10 @@ public class LinkListOperation extends HttpServlet {
             delete(request, response);
             return;
         }
-        
+
         response.sendError(400);
     }
-    
+
     private void add(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String title = request.getParameter(PARAM_TITLE);
@@ -106,7 +106,7 @@ public class LinkListOperation extends HttpServlet {
             response.sendError(400);
             return;
         }
-        
+
         try {
             if (image == null) {
                 linkDao.createNewLink(title, url);
@@ -119,7 +119,7 @@ public class LinkListOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private void edit(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String linkIdParam = request.getParameter(PARAM_LINK_ID);
@@ -130,7 +130,7 @@ public class LinkListOperation extends HttpServlet {
             response.sendError(400);
             return;
         }
-        
+
         try {
             long linkId = Long.valueOf(linkIdParam);
             Link link = linkDao.getLinkById(linkId);
@@ -153,7 +153,7 @@ public class LinkListOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private void delete(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String linkIdParam = request.getParameter(PARAM_LINK_ID);
@@ -161,7 +161,7 @@ public class LinkListOperation extends HttpServlet {
             response.sendError(400);
             return;
         }
-        
+
         try {
             long linkId = Long.valueOf(linkIdParam);
             linkDao.deleteLink(linkId);

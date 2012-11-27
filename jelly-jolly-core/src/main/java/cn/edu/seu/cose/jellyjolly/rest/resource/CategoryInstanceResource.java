@@ -17,10 +17,10 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Category;
-import cn.edu.seu.cose.jellyjolly.model.dao.CategoryDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
+import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.rest.JellyJollyRouter;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CategoryInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.adapter.Adapter;
@@ -41,22 +41,22 @@ import org.restlet.resource.ServerResource;
  * @author rAy <predator.ray@gmail.com>
  */
 public class CategoryInstanceResource extends ServerResource {
-    
+
     private static final String ILLEGAL_PARAM_MSG =
             "parameter: category-id should be numeric";
-    
+
     private static final Logger logger = Logger.getLogger(
             CategoryInstanceResource.class.getName());
-    
+
     private CategoryDataAccess categoryDao;
-    
+
     public CategoryInstanceResource() {
         DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         categoryDao = factory.getCategoryDataAccess();
     }
-    
+
     @Get("xml")
     public Representation getCategory() {
         try {
@@ -77,7 +77,7 @@ public class CategoryInstanceResource extends ServerResource {
             return ResourceUtils.getFailureRepresentation(ex);
         }
     }
-    
+
     @Put("xml:xml")
     public Representation createNewCategory(Representation newCategory) {
         try {
@@ -92,7 +92,7 @@ public class CategoryInstanceResource extends ServerResource {
             return ResourceUtils.getFailureRepresentation(ex);
         }
     }
-    
+
     @Delete("xml:xml")
     public Representation deleteCategory(Representation none) {
         try {

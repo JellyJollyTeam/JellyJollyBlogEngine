@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.bean;
+package cn.edu.seu.cose.jellyjolly.dto;
 
 import java.util.Date;
 
@@ -23,23 +23,23 @@ import java.util.Date;
  * @author rAy
  */
 public class Comment {
-    
+
     private long commentId;
-    
+
     private Comment parentComment;
-    
+
     private long postId;
-    
+
     private String authorName;
-    
+
     private String authorEmail;
-    
+
     private String authorHomePageUrl;
-    
+
     private Date date;
-    
+
     private String content;
-    
+
     private long authorUserId;
 
     public void setCommentId(long commentId) {
@@ -73,7 +73,7 @@ public class Comment {
     public void setContent(String content) {
         this.content = content;
     }
-    
+
     public void setAuthorUserId(Long authorUserId) {
         this.authorUserId = authorUserId;
     }
@@ -109,9 +109,9 @@ public class Comment {
     public String getContent() {
         return content;
     }
-    
+
     public long getAuthorUserId() {
         return authorUserId;
     }
-    
+
 }

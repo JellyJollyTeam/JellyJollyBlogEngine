@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
-import cn.edu.seu.cose.jellyjolly.model.dao.AdminUserDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,23 +37,23 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class AdminUserListBuilder extends HttpFilter {
-    
+
     private static final String ATTR_ADMIN_USER_LIST = "adminUserList";
-    
+
     private AdminUserDataAccess adminUserDao;
-    
+
     private static AdminUserDataAccess getAdminUserDataAccess() {
         DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         return factory.getAdminUserDataAccess();
     }
-    
+
     @Override
     public void init(FilterConfig config) throws ServletException {
         adminUserDao = getAdminUserDataAccess();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response,
             FilterChain chain) throws IOException, ServletException {

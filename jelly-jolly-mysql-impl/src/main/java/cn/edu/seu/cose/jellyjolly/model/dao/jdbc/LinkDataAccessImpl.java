@@ -17,9 +17,9 @@
 
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Link;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.LinkDataAccess;
+import cn.edu.seu.cose.jellyjolly.dto.Link;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.LinkDataAccess;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,43 +33,43 @@ import java.util.List;
  * @author rAy <predator.ray@gmail.com>
  */
 public class LinkDataAccessImpl implements LinkDataAccess {
-    
+
     private static final String COLUMN_LINK_ID = "link_id";
-    
+
     private static final String COLUMN_LINK_TITLE = "link_title";
-    
+
     private static final String COLUMN_LINK_IMAGE = "link_image";
-    
+
     private static final String COLUMN_LINK_URL = "link_url";
-    
+
     private static final String STATEMENT_GET_LINK_BY_ID =
             "SELECT * FROM jj_links WHERE link_id=?;";
-    
+
     private static final String STATEMENT_GET_LINKS =
             "SELECT * FROM jj_links;";
-    
+
     private static final String STATEMENT_GET_LINK_NUM =
             "SELECT COUNT(1) FROM jj_links;";
-    
+
     private static final String STATEMENT_CREATE_LINK =
             "INSERT INTO jj_links(link_title, link_image, link_url) VALUES (?, ?, ?);";
-    
+
     private static final String STATEMENT_CREATE_LINK_WITHOUT_IMAGE =
             "INSERT INTO jj_links(link_title, link_url) VALUES (?, ?);";
-    
+
     private static final String STATEMENT_UPDATE_LINK =
             "UPDATE jj_links SET link_title=?, link_image=?, link_url=? "
             + "WHERE link_id=?;";
-    
+
     private static final String STATEMENT_DELETE_LINK_BY_ID =
             "DELETE FROM jj_links WHERE link_id=?;";
-    
+
     private static Link getLinkByResultSet(ResultSet rs) throws SQLException {
         long id = rs.getLong(COLUMN_LINK_ID);
         String title = rs.getString(COLUMN_LINK_TITLE);
         String image = rs.getString(COLUMN_LINK_IMAGE);
         String url = rs.getString(COLUMN_LINK_URL);
-        
+
         Link link = new Link();
         link.setImage(image);
         link.setLinkId(id);
@@ -77,9 +77,9 @@ public class LinkDataAccessImpl implements LinkDataAccess {
         link.setUrl(url);
         return link;
     }
-    
+
     private ConnectionFactory factory;
-    
+
     public LinkDataAccessImpl(ConnectionFactory factory) {
         this.factory = factory;
     }
@@ -147,7 +147,7 @@ public class LinkDataAccessImpl implements LinkDataAccess {
 
     @Override
     public long createNewLink(String title, String url) throws DataAccessException {
-        
+
         Connection connection = factory.newConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(
@@ -159,7 +159,7 @@ public class LinkDataAccessImpl implements LinkDataAccess {
             if (!rs.next()) {
                 return 0;
             }
-            
+
             long id = rs.getLong(1);
             return id;
         } catch (SQLException ex) {
@@ -184,7 +184,7 @@ public class LinkDataAccessImpl implements LinkDataAccess {
             if (!rs.next()) {
                 return 0;
             }
-            
+
             long id = rs.getLong(1);
             return id;
         } catch (SQLException ex) {

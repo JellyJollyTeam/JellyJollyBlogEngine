@@ -18,11 +18,11 @@
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
 import cn.edu.seu.cose.jellyjolly.util.Utils;
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPost;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPostDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,41 +37,41 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class BlogPostInstanceBuilder extends HttpFilter {
-    
+
     private static final String INFO_INVALID_INPUT =
             "BlogPostInstanceBuilder: invalid input";
-    
+
     public static final String ATTRI_BLOG_POST = "blogpost";
-    
+
     public static final String PARAM_BLOG_POST_ID = "postid";
-    
+
     private BlogPostDataAccess blogPostDataAccess;
-    
+
     private static BlogPostDataAccess getBlogPostDataAccess() {
             DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
             DataAccessFactory factory = manager.getAvailableFactory();
             return factory.getBlogPostDataAccess();
     }
-    
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
         blogPostDataAccess = getBlogPostDataAccess();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         String blogPostIdParam = request.getParameter(PARAM_BLOG_POST_ID);
-        
+
         // invalid user input
         if (blogPostIdParam == null || !Utils.isNumeric(blogPostIdParam)) {
             response.sendError(400, INFO_INVALID_INPUT);
             return;
         }
-        
+
         try {
             long blogPostId = Long.valueOf(blogPostIdParam);
             BlogPost post = blogPostDataAccess.getPostById(blogPostId);
@@ -83,7 +83,7 @@ public class BlogPostInstanceBuilder extends HttpFilter {
                     .log(Level.SEVERE, ex.getMessage(), ex);
             response.sendError(500, ex.getMessage());
         }
-        
+
         chain.doFilter(request, response);
     }
 

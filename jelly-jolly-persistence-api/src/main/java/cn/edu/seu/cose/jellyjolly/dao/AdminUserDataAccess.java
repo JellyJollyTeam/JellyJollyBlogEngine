@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.dao;
+package cn.edu.seu.cose.jellyjolly.dao;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,45 +26,45 @@ import java.util.Map;
  * @author rAy <predator.ray@gmail.com>
  */
 public interface AdminUserDataAccess {
-    
+
     boolean confirm(String username, String password)
             throws DataAccessException;
-    
+
     AdminUser getUserIfConfirmed(String username, String password)
             throws DataAccessException;
-    
+
     AdminUser getUser(long userId) throws DataAccessException;
-    
+
     List<AdminUser> getAllUsers() throws DataAccessException;
-    
+
     Map<String, List<String>> getUserProperties(long userId)
             throws DataAccessException;
-    
+
     AdminUser addNewUser(AdminUser user) throws DataAccessException;
-    
+
     AdminUser addNewUser(String username, String password, String email,
             String displayName, Date registerTime) throws DataAccessException;
-    
+
     AdminUser addNewUser(String username, String password, String email,
             String homePageUrl, String displayName, Date registerTime)
             throws DataAccessException;
-    
+
     void addUserProperty(long userId, String key, String[] values)
             throws DataAccessException;
-    
+
     void updateUser(AdminUser user) throws DataAccessException;
-    
+
     boolean changeUserName(long userId, String username)
             throws DataAccessException;
-    
+
     void changePassword(long userId, String password) throws DataAccessException;
-    
+
     void setLastLoginTime(long userId, Date date) throws DataAccessException;
-    
+
     void deleteUser(long userId) throws DataAccessException;
-    
+
     void deleteUserProperty(long userId, String key) throws DataAccessException;
-    
+
     void clearUserProperty(long userId) throws DataAccessException;
-    
+
 }

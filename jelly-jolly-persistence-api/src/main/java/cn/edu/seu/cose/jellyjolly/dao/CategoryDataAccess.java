@@ -14,37 +14,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.dao;
+package cn.edu.seu.cose.jellyjolly.dao;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Link;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
 import java.util.List;
 
 /**
  *
  * @author rAy
  */
-public interface LinkDataAccess {
-    
-    public static enum LinkOrderStrategy {
+public interface CategoryDataAccess {
+
+    public static enum CategoryOrderStrategy {
         ORDERED_BY_NAME_ASC, ORDERED_BY_NAME_DESC,
         ORDERED_BY_ID_ASC, ORDERED_BY_ID_DESC
     }
-    
-    Link getLinkById(long linkId) throws DataAccessException;
-    
-    List<Link> getAllLinks() throws DataAccessException;
-    
-    long getLinkNumber() throws DataAccessException;
-    
-    long createNewLink(Link link) throws DataAccessException;
-    
-    long createNewLink(String title, String url) throws DataAccessException;
-    
-    long createNewLink(String title, String image, String url)
+
+    Category getCategoryById(int categoryId) throws DataAccessException;
+
+    int getCategoryNumber() throws DataAccessException;
+
+    List<Category> getAllCategories() throws DataAccessException;
+
+    List<Category> getAllCategories(CategoryOrderStrategy strategy)
             throws DataAccessException;
-    
-    void updateLink(Link link) throws DataAccessException;
-    
-    void deleteLink(long linkId) throws DataAccessException;
-    
+
+    Category createNewCategory(String name) throws DataAccessException;
+
+    void updateCategoryNameById(int categoryId, String name)
+            throws DataAccessException;
+
+    void updateCategory(Category category) throws DataAccessException;
+
+    void deleteCategoryById(int categoryId) throws DataAccessException;
+
+    void deleteCategory(Category category) throws DataAccessException;
+
 }

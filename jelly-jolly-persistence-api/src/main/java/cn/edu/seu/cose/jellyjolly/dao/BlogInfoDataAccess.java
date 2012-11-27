@@ -14,33 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.dao;
+package cn.edu.seu.cose.jellyjolly.dao;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogInfo;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
 
 /**
  *
  * @author rAy
  */
 public interface BlogInfoDataAccess {
-    
+
     BlogInfo getBlogInfoInstance() throws DataAccessException;
-    
+
     void setBlogTitle(String title) throws DataAccessException;
-    
+
     void setBlogSubTitle(String subTitle) throws DataAccessException;
-    
+
     void setBlogUrl(String blogUrl) throws DataAccessException;
-    
+
     void addBlogInfoMeta(String key, String value) throws DataAccessException;
-    
+
     void deleteBlogInfoMeta(String key) throws DataAccessException;
-    
+
     String[] getBlogInfoMeta(String key) throws DataAccessException;
-    
+
     void setBlogInfoMeta(String key, String previousValue, String currentValue)
             throws DataAccessException;
-    
+
     void setBlogInfoMeta(String key, String[] values) throws DataAccessException;
-    
+
 }

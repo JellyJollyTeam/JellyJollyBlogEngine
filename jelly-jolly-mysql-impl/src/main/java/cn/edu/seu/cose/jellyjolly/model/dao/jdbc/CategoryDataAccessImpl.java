@@ -17,9 +17,9 @@
 
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Category;
-import cn.edu.seu.cose.jellyjolly.model.dao.CategoryDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
+import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,46 +33,46 @@ import java.util.List;
  * @author rAy <predator.ray@gmail.com>
  */
 public class CategoryDataAccessImpl implements CategoryDataAccess {
-    
+
     private static final CategoryOrderStrategy DEFAULT_STRATEGY =
             CategoryOrderStrategy.ORDERED_BY_NAME_DESC;
-    
+
     private static final String COLUMN_CATEGORY_ID = "category_id";
-    
+
     private static final String COLUMN_CATEGORY_NAME = "name";
-    
+
     private static final String STATEMENT_GET_CATEGORY_BY_ID =
             "SELECT * FROM jj_categories WHERE category_id=?;";
-    
+
     private static final String STATEMENT_GET_CATEGORIES =
             "SELECT * FROM jj_categories;";
-    
+
     private static final String STATEMENT_GET_CATEGORIES_ORDERED_BY_NAME_ASC =
             "SELECT * FROM jj_categories ORDER BY name ASC;";
-    
+
     private static final String STATEMENT_GET_CATEGORIES_ORDERED_BY_NAME_DESC =
             "SELECT * FROM jj_categories ORDER BY name DESC;";
-    
+
     private static final String STATEMENT_GET_CATEGORIES_ORDERED_BY_ID_ASC =
             "SELECT * FROM jj_categories ORDER BY category_id ASC;";
-    
+
     private static final String STATEMENT_GET_CATEGORIES_ORDERED_BY_ID_DESC =
             "SELECT * FROM jj_categories ORDER BY category_id DESC;";
-    
+
     private static final String STATEMENT_CREATE_CATEGORY =
             "INSERT INTO jj_categories(name) VALUES (?);";
-    
-    private static final String STATEMENT_UPDATE_CATEGORY = 
+
+    private static final String STATEMENT_UPDATE_CATEGORY =
             "UPDATE jj_categories SET name=? WHERE category_id=?;";
-    
+
     private static final String STATEMENT_DELETE_CATEGORY_BY_ID =
             "DELETE FROM jj_categories WHERE category_id=?;";
-    
+
     private static final String STATEMENT_GET_CATEGORY_NUM =
             "SELECT COUNT(1) FROM jj_categories;";
-    
+
     private ConnectionFactory factory;
-    
+
     private static Category getCategoryByResultSet(ResultSet rs)
             throws SQLException {
         int id = rs.getInt(COLUMN_CATEGORY_ID);
@@ -82,7 +82,7 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
         category.setName(name);
         return category;
     }
-    
+
     public CategoryDataAccessImpl(ConnectionFactory factory) {
         this.factory = factory;
     }
@@ -98,7 +98,7 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
             if (!rs.next()) {
                 return null;
             }
-            
+
             Category category = getCategoryByResultSet(rs);
             return category;
         } catch (SQLException ex) {
@@ -159,16 +159,16 @@ public class CategoryDataAccessImpl implements CategoryDataAccess {
                     STATEMENT_CREATE_CATEGORY, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, name);
             int rowCount = ps.executeUpdate();
-            
+
             if (rowCount <= 0) {
                 return null;
             }
-            
+
             ResultSet rs = ps.getGeneratedKeys();
             if (!rs.next()) {
                 return null;
             }
-            
+
             int id = rs.getInt(1);
             Category category = new Category();
             category.setCategoryId(id);

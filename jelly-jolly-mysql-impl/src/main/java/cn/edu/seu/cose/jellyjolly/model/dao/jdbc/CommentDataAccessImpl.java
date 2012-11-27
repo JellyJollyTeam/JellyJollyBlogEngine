@@ -17,9 +17,9 @@
 
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Comment;
-import cn.edu.seu.cose.jellyjolly.model.dao.CommentDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
+import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -60,7 +60,7 @@ public class CommentDataAccessImpl implements CommentDataAccess {
 
     private static final String STATEMENT_GET_COMMENTS =
             "SELECT * FROM jj_blog_comments;";
-    
+
     private static final String STATEMENT_GET_RECENT_COMMENTS =
             "SELECT * FROM jj_blog_comments ORDER BY comment_date DESC LIMIT ?";
 
@@ -211,7 +211,7 @@ public class CommentDataAccessImpl implements CommentDataAccess {
             factory.closeConnection(connection);
         }
     }
-    
+
     @Override
     public List<Comment> getRecentComments(long number)
             throws DataAccessException {

@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPageBar;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPageDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPageBar;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,16 +36,16 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class PageListBuilder extends HttpFilter {
-    
+
     protected static final String ATTR_PAGE_LIST = "pageList";
-    
+
     private static BlogPageDataAccess getBlogPageDataAccess() {
         DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         return factory.getBlogPageDataAccess();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response,
             FilterChain chain) throws IOException, ServletException {

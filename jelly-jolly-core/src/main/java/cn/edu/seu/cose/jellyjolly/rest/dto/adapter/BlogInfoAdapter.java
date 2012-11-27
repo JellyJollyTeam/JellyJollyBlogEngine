@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.dto.adapter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogInfo;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogInfoInstance;
 import java.util.Map;
 

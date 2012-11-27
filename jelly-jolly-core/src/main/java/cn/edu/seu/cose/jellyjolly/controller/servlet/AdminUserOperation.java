@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
-import cn.edu.seu.cose.jellyjolly.model.dao.AdminUserDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.Date;
@@ -40,45 +40,45 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "AdminUserOperation", urlPatterns = {"/admin/user"})
 public class AdminUserOperation extends HttpServlet {
-    
+
     private static final String PARAM_OPERATION = "op";
-    
+
     private static final String PARAM_USER_ID = "userid";
-    
+
     private static final String PARAM_USERNAME = "username";
-    
+
     private static final String PARAM_PREVIOUS_PASS = "prvpass";
-    
+
     private static final String PARAM_NEW_PASS = "newpass";
-    
+
     private static final String PARAM_EMAIL = "email";
-    
+
     private static final String PARAM_HOME_PAGE = "homepage";
-    
+
     private static final String PARAM_DISPLAY_NAME = "displayname";
-    
+
     private static final String OP_ADD = "add";
-    
+
     private static final String OP_EDIT = "edit";
-    
+
     private static final String OP_DELETE = "del";
-    
+
     private static final String USERS_URL = "./users.jsp";
-    
+
     private static final String HOME_URL = "../home.jsp";
-    
+
     private static final Logger logger = Logger.getLogger(
             AdminUserOperation.class.getName());
-    
+
     private AdminUserDataAccess adminUserDao;
-    
+
     private static AdminUserDataAccess getAdminUserDataAccess() {
             DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
             DataAccessFactory factory = manager.getAvailableFactory();
             return factory.getAdminUserDataAccess();
     }
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         adminUserDao = getAdminUserDataAccess();
@@ -99,7 +99,7 @@ public class AdminUserOperation extends HttpServlet {
             throws ServletException, IOException {
         doPost(request, response);
     }
-        
+
 
     /**
      * Handles the HTTP
@@ -115,7 +115,7 @@ public class AdminUserOperation extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
         String operation = request.getParameter(PARAM_OPERATION);
-        
+
         if (OP_ADD.equalsIgnoreCase(operation)) {
             add(request, response);
             return;
@@ -128,10 +128,10 @@ public class AdminUserOperation extends HttpServlet {
             delete(request, response);
             return;
         }
-        
+
         response.sendError(400);
     }
-    
+
     private void add(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
@@ -144,7 +144,7 @@ public class AdminUserOperation extends HttpServlet {
             response.sendError(400);
             return;
         }
-        
+
         try {
             Date currentDate = new Date();
             if (homePage == null) {
@@ -160,7 +160,7 @@ public class AdminUserOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private void edit(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
@@ -171,21 +171,21 @@ public class AdminUserOperation extends HttpServlet {
         String email = request.getParameter(PARAM_EMAIL);
         String homePage = request.getParameter(PARAM_HOME_PAGE);
         String displayName = request.getParameter(PARAM_DISPLAY_NAME);
-        
+
         if (userIdParam == null || !Utils.isNumeric(userIdParam)) {
             response.sendError(400);
             return;
         }
-        
+
         try {
             long userId = Long.valueOf(userIdParam);
             AdminUser currentUser = adminUserDao.getUser(userId);
-            
+
             if (newPassword != null && (previousPass == null
                     || !adminUserDao.confirm(currentUser.getUsername(), previousPass))) {
                     response.sendError(401);
             }
-            
+
             if (username != null) {
                 currentUser.setUsername(username);
             }
@@ -201,10 +201,10 @@ public class AdminUserOperation extends HttpServlet {
             if (homePage != null) {
                 currentUser.setHomePageUrl(homePage);
             }
-            
+
             adminUserDao.updateUser(currentUser);
             response.sendRedirect(USERS_URL);
-        } catch (NumberFormatException ex) { 
+        } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
             response.sendError(400, ex.getMessage());
         } catch (DataAccessException ex) {
@@ -212,22 +212,22 @@ public class AdminUserOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private void delete(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
         String userIdParam = request.getParameter(PARAM_USER_ID);
-        
+
         if (userIdParam == null || !Utils.isNumeric(userIdParam)) {
             response.sendError(400);
             return;
         }
-        
+
         try {
             long userId = Long.valueOf(userIdParam);
             adminUserDao.deleteUser(userId);
             response.sendRedirect(USERS_URL);
-        } catch (NumberFormatException ex) { 
+        } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
             response.sendError(400, ex.getMessage());
         } catch (DataAccessException ex) {

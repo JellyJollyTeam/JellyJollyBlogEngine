@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPost;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPostDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.rest.JellyJollyRouter;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPostInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPosts;
@@ -50,40 +50,40 @@ import org.restlet.resource.ServerResource;
  * @author rAy <predator.ray@gmail.com>
  */
 public class BlogPostInstanceResource extends ServerResource {
-    
+
     private static final String PARAM_OFFSET = "offset";
-    
+
     private static final String PARAM_LIMIT = "limit";
-    
+
     private static final String PARAM_CATEGORY = "category";
-    
+
     private static final String PARAM_AUTHOR = "author";
-    
+
     private static final String PARAM_YEAR = "year";
-    
+
     private static final String PARAM_MONTH = "month";
-    
+
     private static final String PARAM_KEYWORD = "keyword";
-    
+
     private static final String ILLEGAL_PARAM_MSG =
             "parameter: blog-post-id should be numeric";
-    
+
     private static final Logger logger = Logger.getLogger(
             BlogPostInstanceResource.class.getName());
-    
+
     private BlogPostDataAccess blogPostDao;
-    
+
     private static Representation handleException(Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
             return ResourceUtils.getFailureRepresentation(ex);
     }
-    
+
     public BlogPostInstanceResource() {
         DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         blogPostDao = factory.getBlogPostDataAccess();
     }
-    
+
     @Get("xml")
     public Representation getBlogPost() {
         try {
@@ -98,7 +98,7 @@ public class BlogPostInstanceResource extends ServerResource {
             return handleException(ex);
         }
     }
-    
+
     @Post("xml:xml")
     public Representation createBlogPost(Representation newPost) {
         try {
@@ -127,7 +127,7 @@ public class BlogPostInstanceResource extends ServerResource {
             return handleException(ex);
         }
     }
-    
+
     @Delete("xml:xml")
     public Representation deleteBlogPost(Representation none) {
         try {
@@ -144,7 +144,7 @@ public class BlogPostInstanceResource extends ServerResource {
             return handleException(ex);
         }
     }
-    
+
     private List<BlogPost> getPostsByValuesMap(Map<String, String> valuesMap)
             throws DataAccessException {
         try {
@@ -159,7 +159,7 @@ public class BlogPostInstanceResource extends ServerResource {
             String limitParam = valuesMap.get(PARAM_LIMIT);
             long offset = Long.valueOf(offsetParam);
             long limit = Long.valueOf(limitParam);
-            
+
             // get posts by category
             if (valuesMap.containsKey(PARAM_CATEGORY)) {
                 String categoryParam = valuesMap.get(PARAM_CATEGORY);
@@ -169,7 +169,7 @@ public class BlogPostInstanceResource extends ServerResource {
                 int categoryId = Integer.valueOf(categoryParam);
                 return blogPostDao.getPostsByCategoryId(categoryId, offset, limit);
             }
-            
+
             // get posts by author
             if (valuesMap.containsKey(PARAM_AUTHOR)) {
                 String authorParam = valuesMap.get(PARAM_AUTHOR);
@@ -179,7 +179,7 @@ public class BlogPostInstanceResource extends ServerResource {
                 long userId = Long.valueOf(authorParam);
                 return blogPostDao.getPostsByUserId(userId, offset, limit);
             }
-            
+
             // get posts by archive
             if (valuesMap.containsKey(PARAM_YEAR)
                     && valuesMap.containsKey(PARAM_YEAR)) {
@@ -192,13 +192,13 @@ public class BlogPostInstanceResource extends ServerResource {
                 int month = Integer.valueOf(monthParam);
                 return blogPostDao.getPostsByMonthlyArchive(year, month, offset, limit);
             }
-            
+
             // get posts by keyword
             if (valuesMap.containsKey(PARAM_KEYWORD)) {
                 String keyword = valuesMap.get(PARAM_KEYWORD);
                 return blogPostDao.getPostsByKeyword(keyword, offset, limit);
             }
-            
+
             // get posts just by offset and limit
             return blogPostDao.getPosts(offset, limit);
         } catch (NumberFormatException ex) {

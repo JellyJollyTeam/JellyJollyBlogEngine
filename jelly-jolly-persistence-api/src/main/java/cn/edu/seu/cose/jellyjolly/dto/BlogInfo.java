@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.bean;
+package cn.edu.seu.cose.jellyjolly.dto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,63 +24,63 @@ import java.util.Map;
  * @author rAy
  */
 public class BlogInfo {
-    
+
     private int blogId;
-    
+
     private String blogTitle;
-    
+
     private String blogSubTitle;
-    
+
     private String blogUrl;
-    
+
     private Map<String, String[]> otherProperties;
-    
+
     public BlogInfo() {
         otherProperties = new HashMap<String, String[]>();
     }
-    
+
     public int getBlogId() {
         return blogId;
     }
-    
+
     public void setBlogId(int blogId) {
         this.blogId = blogId;
     }
-    
+
     public String getBlogTitle() {
         return blogTitle;
     }
-    
+
     public void setBlogTitle(String blogTitle) {
         this.blogTitle = blogTitle;
     }
-    
+
     public String getBlogSubTitle() {
         return blogSubTitle;
     }
-    
+
     public void setBlogSubTitle(String blogSubTitle) {
         this.blogSubTitle = blogSubTitle;
     }
-    
+
     public String getBlogUrl() {
         return blogUrl;
     }
-    
+
     public void setBlogUrl(String blogUrl) {
         this.blogUrl = blogUrl;
     }
-    
+
     public String[] getOtherProperty(String name) {
         return otherProperties.get(name);
     }
-    
+
     public void setOtherProperty(String name, String[] property) {
         otherProperties.put(name, property);
     }
-    
+
     public Map<String, String[]> getOtherProperties() {
         return otherProperties;
     }
-    
+
 }

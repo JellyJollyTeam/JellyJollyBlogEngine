@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.dto.adapter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import cn.edu.seu.cose.jellyjolly.rest.dto.AdminUsers;
 import java.util.Collection;
 

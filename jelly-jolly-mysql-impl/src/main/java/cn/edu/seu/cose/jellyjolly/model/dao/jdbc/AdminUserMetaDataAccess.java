@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,29 +32,29 @@ import java.util.Map;
  * @author rAy <predator.ray@gmail.com>
  */
 public class AdminUserMetaDataAccess {
-    
+
     private static final String COLUMN_META_KEY = "meta_key";
-    
+
     private static final String COLUMN_META_VALUE = "meta_value";
-    
+
     private static final String STATEMENT_DELETE_USER_FROM_USER_META =
             "DELETE FROM jj_user_meta WHERE user_id=?;";
-    
+
     private static final String STATEMENT_DELETE_KEY_FROM_USER_META =
             "DELETE FROM jj_user_meta WHERE user_id=? AND meta_key=?;";
-    
+
     private static final String STATEMENT_GET_USER_META =
             "SELECT * FROM jj_user_meta WHERE user_id=?;";
-    
+
     private static final String STATEMENT_PUT_USER_META =
             "INSERT INTO jj_user_meta(user_id, meta_key, meta_value) VALUES (?, ?, ?);";
-    
+
     private ConnectionFactory factory;
-    
+
     public AdminUserMetaDataAccess(ConnectionFactory factory) {
         this.factory = factory;
     }
-    
+
     public Map<String, List<String>> getUserPropertiesMap(long userId)
             throws JdbcDataAccessException {
         Connection connection = factory.newConnection();
@@ -71,7 +71,7 @@ public class AdminUserMetaDataAccess {
                 if (!keyValueMap.containsKey(key)) {
                     keyValueMap.put(key, new LinkedList<String>());
                 }
-                
+
                 List<String> list = keyValueMap.get(key);
                 list.add(value);
             }
@@ -82,7 +82,7 @@ public class AdminUserMetaDataAccess {
             factory.closeConnection(connection);
         }
     }
-    
+
     public void addUserProperties(AdminUser user) throws JdbcDataAccessException {
         Map<String, List<String>> keyValueMap =
                 getUserPropertiesMap(user.getUserId());
@@ -92,7 +92,7 @@ public class AdminUserMetaDataAccess {
             user.setOtherProperty(key, value.toArray(new String[0]));
         }
     }
-    
+
     public void deleteUserProperty(long userId, String key)
             throws JdbcDataAccessException {
         Connection connection = factory.newConnection();
@@ -108,7 +108,7 @@ public class AdminUserMetaDataAccess {
             factory.closeConnection(connection);
         }
     }
-    
+
     public void clearUserProperties(long userId) throws JdbcDataAccessException {
         Connection connection = factory.newConnection();
         try {
@@ -122,7 +122,7 @@ public class AdminUserMetaDataAccess {
             factory.closeConnection(connection);
         }
     }
-    
+
     public void deleteUserPropertiesTransaction(Connection connection, long userId)
             throws SQLException {
         PreparedStatement ps = connection.prepareStatement(
@@ -130,7 +130,7 @@ public class AdminUserMetaDataAccess {
         ps.setLong(1, userId);
         ps.executeUpdate();
     }
-    
+
     public void putUserProperties(long userId, String key, String[] values)
             throws JdbcDataAccessException {
         Connection connection = factory.newConnection();

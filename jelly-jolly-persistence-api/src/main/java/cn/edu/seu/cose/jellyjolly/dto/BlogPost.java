@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.bean;
+package cn.edu.seu.cose.jellyjolly.dto;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -26,23 +26,23 @@ import java.util.Map;
  * @author rAy
  */
 public class BlogPost {
-    
+
     private long postId;
-    
+
     private AdminUser author;
-    
+
     private Category category;
-    
+
     private Date date;
-    
+
     private String title;
-    
+
     private String content;
-    
+
     private List<Comment> comments;
-    
+
     private Map<String, String[]> otherProperties;
-    
+
     public BlogPost() {
         otherProperties = new HashMap<String, String[]>();
     }
@@ -70,11 +70,11 @@ public class BlogPost {
     public void setContent(String content) {
         this.content = content;
     }
-    
+
     public void setOtherProperty(String name, String[] property) {
         otherProperties.put(name, property);
     }
-    
+
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
@@ -102,17 +102,17 @@ public class BlogPost {
     public String getContent() {
         return content;
     }
-    
+
     public String[] getOtherProperty(String name) {
         return otherProperties.get(name);
     }
-    
+
     public List<Comment> getComments() {
         return comments;
     }
-    
+
     public Map<String, String[]> getOtherProperties() {
         return otherProperties;
     }
-    
+
 }

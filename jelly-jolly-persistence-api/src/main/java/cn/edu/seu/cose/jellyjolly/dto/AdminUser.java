@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.bean;
+package cn.edu.seu.cose.jellyjolly.dto;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -25,25 +25,25 @@ import java.util.Map;
  * @author rAy
  */
 public class AdminUser {
-    
+
     private long userId;
-    
+
     private String username;
-    
+
     private String password;
-    
+
     private String email;
-    
+
     private String homePageUrl;
-    
+
     private String displayName;
-    
+
     private Date registerTime;
-    
+
     private Date lastLoginTime;
-    
+
     private Map<String, String[]> otherProperties;
-    
+
     public AdminUser() {
         otherProperties = new HashMap<String, String[]>();
     }
@@ -79,7 +79,7 @@ public class AdminUser {
     public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
     }
-    
+
     public void setOtherProperty(String name, String[] property) {
         otherProperties.put(name, property);
     }
@@ -115,13 +115,13 @@ public class AdminUser {
     public Date getLastLoginTime() {
         return lastLoginTime;
     }
-    
+
     public String[] getOtherProperty(String name) {
         return otherProperties.get(name);
     }
-    
+
     public Map<String, String[]> getOtherProperties() {
         return otherProperties;
     }
-    
+
 }

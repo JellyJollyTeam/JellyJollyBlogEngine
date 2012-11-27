@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.dto.adapter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Category;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CategoryInstance;
 
 /**
@@ -34,5 +34,5 @@ public class CategoryInstanceAdapter
         target.setName(adaptee.getName());
         return target;
     }
-    
+
 }

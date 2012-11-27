@@ -15,20 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.edu.seu.cose.jellyjolly.model.bean;
+package cn.edu.seu.cose.jellyjolly.dto;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
 public class BlogStatistics {
-    
+
     private long postCount;
-    
+
     private int pageCount;
-    
+
     private int categoryCount;
-    
+
     private long commentCount;
 
     public long getPostCount() {

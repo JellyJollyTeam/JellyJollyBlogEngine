@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.edu.seu.cose.jellyjolly.model.dao;
+package cn.edu.seu.cose.jellyjolly.dao;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -30,52 +30,52 @@ import java.util.logging.Logger;
  * @author rAy <predator.ray@gmail.com>
  */
 public class DataAccessFactoryManager {
-    
+
     private static final String NA_FACTORY_HINT = "No Available Factory";
-    
+
     private static final String REGISTER_FACTORY_HINT = "Registering factory: ";
-    
+
     private static final String REGISTER_FAILURE_HINT = "Fail to register factory: ";
-    
+
     private static DataAccessFactoryManager managerInstance;
-    
+
     private Map<String, Class<? extends DataAccessFactory>> factoryInstances;
-    
+
     private static String getRegisterHint(String factoryClassName) {
         StringBuilder builder = new StringBuilder();
         builder.append(REGISTER_FACTORY_HINT).append(factoryClassName);
         return builder.toString();
     }
-    
+
     private static String getRegisterFailureHint(String className) {
         StringBuilder builder = new StringBuilder();
         builder.append(REGISTER_FAILURE_HINT).append(className);
         return builder.toString();
     }
-    
+
     public static DataAccessFactoryManager getInstance() {
         if (managerInstance == null) {
             managerInstance = new DataAccessFactoryManager();
         }
         return managerInstance;
     }
-    
+
     protected DataAccessFactoryManager() {
         factoryInstances =
                 new HashMap<String, Class<? extends DataAccessFactory>>();
         init();
     }
-    
+
     private synchronized void init() {
         if (!factoryInstances.isEmpty()) {
             factoryInstances.clear();
         }
     }
-    
+
     public synchronized void register(String className) {
         register(className, className);
     }
-    
+
     public synchronized void register(String name, String className) {
         try {
             Class<?> cls = Class.forName(className);
@@ -84,7 +84,7 @@ public class DataAccessFactoryManager {
                         .log(Level.SEVERE, getRegisterFailureHint(className));
                 return;
             }
-            
+
             Logger.getLogger(DataAccessFactoryManager.class.getName())
                     .log(Level.INFO, getRegisterHint(className));
             factoryInstances.put(name, (Class<?  extends DataAccessFactory>) cls);
@@ -93,15 +93,15 @@ public class DataAccessFactoryManager {
                     .log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
-    
+
     public void reload() {
         init();
     }
-    
+
     public void clear() {
         factoryInstances.clear();
     }
-    
+
     public DataAccessFactory getDataAccessFactory(String name) {
         Class<? extends DataAccessFactory> factoryCls =
                 factoryInstances.get(name);
@@ -115,7 +115,7 @@ public class DataAccessFactoryManager {
             throw new RuntimeException(ex);
         }
     }
-    
+
     public DataAccessFactory getAvailableFactory() {
         Collection<Class<? extends DataAccessFactory>> c =
                 factoryInstances.values();
@@ -125,7 +125,7 @@ public class DataAccessFactoryManager {
                     .log(Level.SEVERE, NA_FACTORY_HINT);
             return null;
         }
-        
+
         Class<? extends DataAccessFactory> factoryCls = it.next();
         try {
             Constructor<? extends DataAccessFactory> constructor =

@@ -17,9 +17,9 @@
 
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogInfo;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogInfoDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
+import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -288,7 +288,7 @@ public class BlogInfoDataAccessImpl implements BlogInfoDataAccess {
                     STATEMENT_DELETE_BLOG_INFO_META);
             ps1.setString(1, key);
             ps1.executeUpdate();
-            
+
             for (String value: values) {
                 PreparedStatement ps2 = connection.prepareStatement(
                         STATEMENT_ADD_BLOG_INFO_META);

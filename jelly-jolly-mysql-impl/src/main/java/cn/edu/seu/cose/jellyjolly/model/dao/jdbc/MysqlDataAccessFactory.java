@@ -17,23 +17,23 @@
 
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.model.dao.AdminUserDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogInfoDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPageDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPostDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.CategoryDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.CommentDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.LinkDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.LinkDataAccess;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
 public abstract class MysqlDataAccessFactory implements DataAccessFactory {
-    
+
     private ConnectionFactory factory;
-    
+
     public MysqlDataAccessFactory(ConnectionFactory factory) {
         this.factory = factory;
     }

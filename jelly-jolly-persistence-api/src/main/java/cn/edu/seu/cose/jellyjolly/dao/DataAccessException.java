@@ -14,32 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.bean;
+
+package cn.edu.seu.cose.jellyjolly.dao;
 
 /**
  *
- * @author rAy
+ * @author rAy <predator.ray@gmail.com>
  */
-public class Category {
-    
-    private int categoryId;
-    
-    private String name;
-    
-    public int getCategoryId() {
-        return categoryId;
+public class DataAccessException extends Exception {
+
+    public DataAccessException() {
+        super("exception occurred during data access");
     }
-    
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+
+    public DataAccessException(String hint) {
+        super(hint);
     }
-    
-    public String getName() {
-        return name;
+
+    public DataAccessException(Exception e) {
+        super(e);
     }
-    
-    public void setName(String name) {
-        this.name = name;
+
+    public DataAccessException(String hint, Exception e) {
+        super(hint, e);
     }
-    
+
 }

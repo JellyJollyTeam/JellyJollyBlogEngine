@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 rAy <predator.ray@gmail.com>
+ * Copyright (C) 2012 Colleage of Software Engineering, Southeast University
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,43 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package cn.edu.seu.cose.jellyjolly.model.bean;
+package cn.edu.seu.cose.jellyjolly.dto;
 
 /**
  *
- * @author rAy <predator.ray@gmail.com>
+ * @author rAy
  */
-public class MonthArchive {
-    
-    private int year;
-    
-    private int month;
-    
-    private long count;
+public class Category {
 
-    public int getYear() {
-        return year;
+    private int categoryId;
+
+    private String name;
+
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public int getMonth() {
-        return month;
+    public String getName() {
+        return name;
     }
 
-    public void setMonth(int month) {
-        this.month = month;
-    }
-
-    public long getCount() {
-        return count;
-    }
-
-    public void setCount(long count) {
-        this.count = count;
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

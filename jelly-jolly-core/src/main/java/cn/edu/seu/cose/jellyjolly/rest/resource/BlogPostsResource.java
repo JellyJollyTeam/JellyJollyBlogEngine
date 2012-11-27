@@ -17,9 +17,9 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPostDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPostInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPosts;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CategoryInstance;
@@ -41,23 +41,23 @@ import org.restlet.resource.ServerResource;
  * @author rAy <predator.ray@gmail.com>
  */
 public class BlogPostsResource extends ServerResource {
-    
+
     private static final String PARAM_OFFSET = "offset";
-    
+
     private static final String PARAM_LIMIT = "limit";
-    
+
     private static final Logger logger = Logger.getLogger(
             BlogPostsResource.class.getName());
-    
+
     private BlogPostDataAccess blogPostDao;
-    
+
     public BlogPostsResource() {
         DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         blogPostDao = factory.getBlogPostDataAccess();
     }
-    
+
     @Get("xml")
     public Representation getPosts() {
         try {
@@ -69,7 +69,7 @@ public class BlogPostsResource extends ServerResource {
             long limit = Utils.isNumeric(limitParam)
                     ? Long.valueOf(limitParam)
                     : 0;
-            List<cn.edu.seu.cose.jellyjolly.model.bean.BlogPost> postList =
+            List<cn.edu.seu.cose.jellyjolly.dto.BlogPost> postList =
                     blogPostDao.getPosts(offset, limit);
             BlogPostCollectionAdapter adapter = new BlogPostCollectionAdapter();
             BlogPosts postsTarget = adapter.adapt(postList);
@@ -79,7 +79,7 @@ public class BlogPostsResource extends ServerResource {
             return ResourceUtils.getFailureRepresentation(ex);
         }
     }
-    
+
     @Post("xml")
     public Representation createPost(Representation newPost) {
         try {

@@ -17,16 +17,16 @@
 
 package cn.edu.seu.cose.jellyjolly.rss;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogInfo;
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPost;
-import cn.edu.seu.cose.jellyjolly.model.dao.AdminUserDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogInfoDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPostDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPostDataAccess.BlogPostOrderStrategy;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
+import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess.BlogPostOrderStrategy;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndCategoryImpl;
 import com.sun.syndication.feed.synd.SyndContent;
@@ -47,35 +47,35 @@ import java.util.List;
  * @author rAy <predator.ray@gmail.com>
  */
 public class RssBuilder {
-    
+
     private static final String DEFAULT_FEED_TYPE = "rss_2.0";
-    
+
     private static final int SUMMARY_LENGTH = 300;
-    
+
     private static RssBuilder instance;
-    
+
     private AdminUserDataAccess adminUserDao;
-    
+
     private BlogInfoDataAccess blogInfoDao;
-    
+
     private BlogPostDataAccess blogPostDao;
-    
+
     private SyndFeed feedProduct;
-    
+
     public static RssBuilder getInstance() {
         if (instance == null) {
             instance = new RssBuilder();
         }
         return instance;
     }
-    
+
     private static SyndEntry parsePost(BlogPost post) {
         SyndEntry entry = new SyndEntryImpl();
-        
+
         // author
         String author = post.getAuthor().getDisplayName();
         entry.setAuthor(author);
-        
+
         // category
         String category = post.getCategory().getName();
         List<SyndCategory> categories = new LinkedList<SyndCategory>();
@@ -83,7 +83,7 @@ public class RssBuilder {
         syndCategory.setName(category);
         categories.add(syndCategory);
         entry.setCategories(categories);
-        
+
         // discription
         SyndContent content = new SyndContentImpl();
         String postContent = post.getContent();
@@ -93,12 +93,12 @@ public class RssBuilder {
         content.setType("text/html");
         content.setValue(text);
         entry.setDescription(content);
-        
+
         // date
         entry.setPublishedDate(post.getDate());
         return entry;
     }
-    
+
     protected RssBuilder() {
         DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
@@ -106,30 +106,30 @@ public class RssBuilder {
         blogInfoDao = factory.getBlogInfoDataAccess();
         blogPostDao = factory.getBlogPostDataAccess();
     }
-    
+
     public SyndFeed getSyndFeed() {
         return feedProduct;
     }
-    
+
     public void buildSyndFeed() throws FeedException, DataAccessException {
         buildFeedInfo();
         buildEntries();
     }
-    
+
     public void buildSyndFeed(String feedType) throws FeedException,
             DataAccessException {
         buildFeedInfo(feedType);
         buildEntries();
     }
-    
+
     private void buildFeedInfo() throws DataAccessException {
         buildFeedInfo(DEFAULT_FEED_TYPE);
     }
-    
+
     private void buildFeedInfo(String feedType) throws DataAccessException {
         feedProduct = new SyndFeedImpl();
         feedProduct.setFeedType(feedType);
-        
+
         BlogInfo blogInfo = blogInfoDao.getBlogInfoInstance();
         // description
         feedProduct.setDescription(blogInfo.getBlogTitle());
@@ -137,15 +137,15 @@ public class RssBuilder {
         feedProduct.setTitle(blogInfo.getBlogTitle());
         // link
         feedProduct.setLink(blogInfo.getBlogUrl());
-        
+
         // url
         String link = blogInfo.getBlogUrl();
         feedProduct.setLink((link == null) ? "" : link);
-        
+
         // pubDate
         Date pubDate = blogPostDao.getLatestPubDate();
         feedProduct.setPublishedDate(pubDate);
-        
+
         // authors
         List<AdminUser> usrLst = adminUserDao.getAllUsers();
         List<SyndPerson> nameList = new LinkedList<SyndPerson>();
@@ -159,17 +159,17 @@ public class RssBuilder {
         }
         feedProduct.setAuthors(nameList);
     }
-    
+
     private void buildEntries() throws DataAccessException {
             List<SyndEntry> entries = new LinkedList<SyndEntry>();
-            
+
             List<BlogPost> postList = blogPostDao.getPosts(0, 100,
                     BlogPostOrderStrategy.ORDERED_BY_DATE_DESC);
             for (BlogPost post: postList) {
                 SyndEntry entry = parsePost(post);
                 entries.add(entry);
             }
-            
+
             feedProduct.setEntries(entries);
     }
 

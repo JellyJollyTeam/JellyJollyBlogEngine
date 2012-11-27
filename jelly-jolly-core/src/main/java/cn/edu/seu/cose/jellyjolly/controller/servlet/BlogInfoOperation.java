@@ -16,10 +16,10 @@
  */
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogInfoDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

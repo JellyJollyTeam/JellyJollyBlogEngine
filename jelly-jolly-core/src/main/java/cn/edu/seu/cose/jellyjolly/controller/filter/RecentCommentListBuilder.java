@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Comment;
-import cn.edu.seu.cose.jellyjolly.model.dao.CommentDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
+import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,26 +37,26 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class RecentCommentListBuilder extends HttpFilter {
-    
+
     public static final String ATTRI_COMMENT_LIST = "commentlist";
-    
+
     private static final long RECENT_LIMIT = 5;
-    
+
     private CommentDataAccess commentDataAccess;
-    
+
     private static CommentDataAccess getCommentDataAccess() {
             DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
             DataAccessFactory factory = manager.getAvailableFactory();
             return factory.getCommentDataAccess();
     }
-    
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
         commentDataAccess = getCommentDataAccess();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response, FilterChain chain)

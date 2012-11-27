@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Link;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
-import cn.edu.seu.cose.jellyjolly.model.dao.LinkDataAccess;
+import cn.edu.seu.cose.jellyjolly.dto.Link;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dao.LinkDataAccess;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,26 +37,26 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class LinkListBuilder extends HttpFilter {
-    
+
     private static final String ATTR_LINK_LIST = "linkList";
-    
+
     private static final Logger logger = Logger.getLogger(
             LinkListBuilder.class.getName());
-    
+
     private LinkDataAccess linkDao;
-    
+
     private static LinkDataAccess getLinkDataAccess() {
         DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         return factory.getLinkDataAccess();
     }
-    
+
     @Override
     public void init(FilterConfig config) throws ServletException {
         linkDao = getLinkDataAccess();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response,
             FilterChain chain) throws IOException, ServletException {

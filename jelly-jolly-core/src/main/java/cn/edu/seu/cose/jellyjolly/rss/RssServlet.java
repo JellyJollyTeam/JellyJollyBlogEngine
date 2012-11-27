@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.rss;
 
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
@@ -35,14 +35,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class RssServlet extends HttpServlet {
-    
+
     private static final String CONTENT_TYPE = "application/xml; charset=UTF-8";
-    
+
     private static final String PARAM_FEED_TYPE = "type";
-    
+
     private static final Logger logger = Logger.getLogger(
             RssServlet.class.getName());
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {

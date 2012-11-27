@@ -18,11 +18,11 @@
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
 import cn.edu.seu.cose.jellyjolly.util.Utils;
-import cn.edu.seu.cose.jellyjolly.model.bean.Comment;
-import cn.edu.seu.cose.jellyjolly.model.dao.CommentDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
+import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,35 +38,35 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class CommentListBuilder extends HttpFilter {
-    
+
     private static final long DEFAULT_OFFSET = 0;
-    
+
     private static final long DEFAULT_MAX = 0;
-    
+
     private static final String INFO_INVALID_INPUT =
             "CommentListBuilder: invalid input";
-    
+
     private static final String PARAM_PAGE = "page";
-    
+
     private static final String PARAM_MAX = "max";
-    
+
     public static final String ATTRI_COMMENT_LIST = "commentlist";
-    
+
     private CommentDataAccess commentDataAccess;
-    
+
     private static CommentDataAccess getCommentDataAccess() {
             DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
             DataAccessFactory factory = manager.getAvailableFactory();
             return factory.getCommentDataAccess();
     }
-    
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
         commentDataAccess = getCommentDataAccess();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response, FilterChain chain)
@@ -75,7 +75,7 @@ public class CommentListBuilder extends HttpFilter {
                 BlogPostInstanceBuilder.PARAM_BLOG_POST_ID);
         String pageParam = request.getParameter(PARAM_PAGE);
         String maxParam = request.getParameter(PARAM_MAX);
-        
+
         // invalid user input
         if (!Utils.isNumericOrNull(postIdParam)
                 || !Utils.isNumericOrNull(pageParam)
@@ -83,7 +83,7 @@ public class CommentListBuilder extends HttpFilter {
             response.sendError(400, INFO_INVALID_INPUT);
             return;
         }
-        
+
         try {
             if (postIdParam != null) {
                 long postId = Long.valueOf(postIdParam);
@@ -99,7 +99,7 @@ public class CommentListBuilder extends HttpFilter {
             if (postIdParam == null && (pageParam == null || maxParam == null)) {
                 doGetAllComments(request, response);
             }
-        
+
             chain.doFilter(request, response);
         } catch (NumberFormatException ex) {
             response.sendError(400, ex.getMessage());
@@ -109,21 +109,21 @@ public class CommentListBuilder extends HttpFilter {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private void doGetAllComments(HttpServletRequest request,
             HttpServletResponse response)
             throws IOException, ServletException, DataAccessException {
         List<Comment> commentList = commentDataAccess.getComments();
         request.setAttribute(ATTRI_COMMENT_LIST, commentList);
     }
-    
+
     private void doGetComments(HttpServletRequest request,
             HttpServletResponse response, long offset, long limit)
             throws IOException, ServletException, DataAccessException {
         List<Comment> commentList = commentDataAccess.getComments(offset, limit);
         request.setAttribute(ATTRI_COMMENT_LIST, commentList);
     }
-    
+
     private void doGetCommentListOfPost(HttpServletRequest request,
             HttpServletResponse response, long postId)
             throws IOException, ServletException, DataAccessException {

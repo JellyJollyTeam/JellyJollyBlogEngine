@@ -14,20 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.bean;
+package cn.edu.seu.cose.jellyjolly.dto;
 
 /**
  *
  * @author rAy
  */
 public class Link {
-    
+
     private long linkId;
-    
+
     private String title;
-    
+
     private String image;
-    
+
     private String url;
 
     public long getLinkId() {
@@ -61,5 +61,5 @@ public class Link {
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
 }

@@ -17,39 +17,39 @@
 
 package cn.edu.seu.cose.jellyjolly.model.session;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
 public class UserAuthorization {
-    
+
     private long authorizedTime;
-    
+
     private long expireTime;
-    
+
     private AdminUser user;
-    
+
     public UserAuthorization(AdminUser user, long authorizedTime,
             long expireTime) {
         this.user = user;
         this.authorizedTime = authorizedTime;
         this.expireTime = expireTime;
     }
-    
+
     public AdminUser getUser() {
         return user;
     }
-    
+
     public void setExpireTime(long expireTime) {
         this.expireTime = expireTime;
     }
-    
+
     public long getExpireTime() {
         return expireTime;
     }
-    
+
     public long getAuthorizedTime() {
         return authorizedTime;
     }

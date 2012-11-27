@@ -15,28 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.edu.seu.cose.jellyjolly.model.dao;
+package cn.edu.seu.cose.jellyjolly.dto;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class DataAccessException extends Exception {
-    
-    public DataAccessException() {
-        super("exception occurred during data access");
+public class BlogPage {
+
+    private int blogPageId;
+
+    private String pageTitle;
+
+    private String pageContent;
+
+    public void setBlogPageId(int blogPageId) {
+        this.blogPageId = blogPageId;
     }
-    
-    public DataAccessException(String hint) {
-        super(hint);
+
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
     }
-    
-    public DataAccessException(Exception e) {
-        super(e);
+
+    public void setPageContent(String pageContent) {
+        this.pageContent = pageContent;
     }
-    
-    public DataAccessException(String hint, Exception e) {
-        super(hint, e);
+
+    public int getBlogPageId() {
+        return blogPageId;
+    }
+
+    public String getPageTitle() {
+        return pageTitle;
+    }
+
+    public String getPageContent() {
+        return pageContent;
     }
 
 }

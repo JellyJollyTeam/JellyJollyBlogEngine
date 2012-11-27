@@ -16,11 +16,11 @@
  */
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
-import cn.edu.seu.cose.jellyjolly.model.dao.AdminUserDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.model.session.UserAuthorization;
 import java.io.IOException;
 import java.util.Date;

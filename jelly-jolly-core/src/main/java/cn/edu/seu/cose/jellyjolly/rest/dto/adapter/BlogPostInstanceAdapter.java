@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.dto.adapter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPost;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPostInstance;
 
 /**
@@ -26,9 +26,9 @@ import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPostInstance;
  */
 public class BlogPostInstanceAdapter implements
         Adapter<BlogPost, BlogPostInstance> {
-    
+
     public BlogPostInstanceAdapter() {
-        
+
     }
 
     @Override

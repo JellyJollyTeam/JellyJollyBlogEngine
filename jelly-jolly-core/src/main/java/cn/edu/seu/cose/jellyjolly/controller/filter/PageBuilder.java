@@ -18,11 +18,11 @@
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
 import cn.edu.seu.cose.jellyjolly.util.Utils;
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPage;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPageDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPage;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;

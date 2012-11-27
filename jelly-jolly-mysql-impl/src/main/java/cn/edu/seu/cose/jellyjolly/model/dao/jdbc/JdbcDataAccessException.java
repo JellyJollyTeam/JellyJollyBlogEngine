@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import java.sql.SQLException;
 
 /**
@@ -25,21 +25,21 @@ import java.sql.SQLException;
  * @author rAy <predator.ray@gmail.com>
  */
 public class JdbcDataAccessException extends DataAccessException {
-    
+
     private static final String DEFAULT_HINT = "jdbc data access exception";
-    
+
     public JdbcDataAccessException() {
         super(DEFAULT_HINT);
     }
-    
+
     public JdbcDataAccessException(String hint) {
         super(hint);
     }
-    
+
     public JdbcDataAccessException(SQLException e) {
         super(e);
     }
-    
+
     public JdbcDataAccessException(String hint, SQLException e) {
         super(hint, e);
     }

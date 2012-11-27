@@ -17,14 +17,14 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogStatistics;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPageDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPostDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.CategoryDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.CommentDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogStatistics;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,39 +39,39 @@ import javax.servlet.http.HttpServletResponse;
  * @author rAy <predator.ray@gmail.com>
  */
 public class BlogStatisticsBuilder extends HttpFilter {
-    
+
     private static final String ATTR_BLOG_STATISTICS = "blogstat";
-    
+
     private DataAccessFactory factory;
-    
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
         factory = manager.getAvailableFactory();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response,
             FilterChain chain) throws IOException, ServletException {
         try {
             BlogPostDataAccess blogPostDao = factory.getBlogPostDataAccess();
             long postCount = blogPostDao.getPostNumber();
-            
+
             BlogPageDataAccess blogPageDao = factory.getBlogPageDataAccess();
             int pageCount = blogPageDao.getPageCount();
-            
+
             CategoryDataAccess categoryDao = factory.getCategoryDataAccess();
             int categoryCount = categoryDao.getCategoryNumber();
-            
+
             CommentDataAccess commentDao = factory.getCommentDataAccess();
             long commentCount = commentDao.getCommentNumber();
-            
+
             BlogStatistics statistics = new BlogStatistics();
             statistics.setCategoryCount(categoryCount);
             statistics.setCommentCount(commentCount);
             statistics.setPageCount(pageCount);
             statistics.setPostCount(postCount);
-            
+
             request.setAttribute(ATTR_BLOG_STATISTICS, statistics);
             chain.doFilter(request, response);
         } catch (DataAccessException ex) {

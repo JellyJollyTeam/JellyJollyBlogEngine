@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.dto.adapter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Comment;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CommentInstance;
 
 /**

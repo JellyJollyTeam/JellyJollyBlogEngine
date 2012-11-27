@@ -17,10 +17,10 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogInfo;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogInfoDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
+import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogInfoInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.Property;
 import cn.edu.seu.cose.jellyjolly.rest.dto.Values;
@@ -39,18 +39,18 @@ import org.restlet.resource.ServerResource;
  * @author rAy <predator.ray@gmail.com>
  */
 public class BlogInfoResource extends ServerResource {
-    
+
     private static final Logger logger = Logger.getLogger(
             BlogInfoResource.class.getName());
-    
+
     private BlogInfoDataAccess blogInfoDao;
-    
+
     public BlogInfoResource() {
         DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         blogInfoDao = factory.getBlogInfoDataAccess();
     }
-    
+
     @Get("xml")
     public Representation getBlogInfo() {
         try {
@@ -63,7 +63,7 @@ public class BlogInfoResource extends ServerResource {
             return ResourceUtils.getFailureRepresentation(ex);
         }
     }
-    
+
     @Put("xml:xml")
     public Representation editBlogInfo(Representation newBlogInfoRepresentation) {
         try {

@@ -17,7 +17,7 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.dto.adapter;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Link;
+import cn.edu.seu.cose.jellyjolly.dto.Link;
 import cn.edu.seu.cose.jellyjolly.rest.dto.LinkInstance;
 
 /**

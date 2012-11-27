@@ -16,7 +16,7 @@
  */
 package cn.edu.seu.cose.jellyjolly.controller.listener;
 
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
@@ -32,14 +32,14 @@ import javax.servlet.annotation.WebListener;
 @WebListener()
 public class PersistenceImplementationInjection
         implements ServletContextListener {
-    
+
     private static final String FACTORY_IMPL_CLASS_NAME = "dao-factory-class-name";
-    
+
     private static final String EXCEPTION_MESSAGE = "context-param: "
             + FACTORY_IMPL_CLASS_NAME + " is empty";
-    
+
     private static final String INJECT_HINT = "Injecting ";
-    
+
     private static String getInjectHint(String factoryImplClassName) {
         StringBuilder builder = new StringBuilder();
         builder.append(INJECT_HINT).append(factoryImplClassName);

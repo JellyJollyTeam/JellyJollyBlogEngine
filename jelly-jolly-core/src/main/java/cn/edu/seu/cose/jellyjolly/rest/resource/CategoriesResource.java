@@ -17,11 +17,11 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Category;
-import cn.edu.seu.cose.jellyjolly.model.dao.CategoryDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
+import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.rest.dto.Categories;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CategoryInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.adapter.Adapter;
@@ -41,19 +41,19 @@ import org.restlet.resource.ServerResource;
  * @author rAy <predator.ray@gmail.com>
  */
 public class CategoriesResource extends ServerResource {
-    
+
     private static final Logger logger = Logger.getLogger(
             CategoriesResource.class.getName());
-    
+
     private CategoryDataAccess categoryDao;
-    
+
     public CategoriesResource() {
         DataAccessFactoryManager manager =
                 DataAccessFactoryManager.getInstance();
         DataAccessFactory factory = manager.getAvailableFactory();
         categoryDao = factory.getCategoryDataAccess();
     }
-    
+
     @Get("xml")
     public Representation getAllCategories() throws DataAccessException {
         try {
@@ -67,7 +67,7 @@ public class CategoriesResource extends ServerResource {
             return ResourceUtils.getFailureRepresentation(ex);
         }
     }
-    
+
     @Post("xml:xml")
     public Representation createNewCategory(Representation newCategory) {
         try {

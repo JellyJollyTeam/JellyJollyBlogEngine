@@ -17,10 +17,10 @@
 
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.model.dao.CommentDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.Date;
@@ -42,7 +42,7 @@ public class VisitorCommentOperation extends HttpServlet
 
     private static final String INFO_INVALID_INPUT =
             "VisitorComment: invalid user input";
-    
+
     private static final Logger logger = Logger.getLogger(
             VisitorCommentOperation.class.getName());
 
@@ -52,7 +52,7 @@ public class VisitorCommentOperation extends HttpServlet
             DataAccessFactory factory = manager.getAvailableFactory();
             return factory.getCommentDataAccess();
     }
-    
+
     private static String getRedirectUrl(long postId) {
         return new StringBuilder().append(POST_URL).append(postId).toString();
     }

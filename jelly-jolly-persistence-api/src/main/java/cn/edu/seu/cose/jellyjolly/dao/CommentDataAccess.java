@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.dao;
+package cn.edu.seu.cose.jellyjolly.dao;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.Comment;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import java.util.Date;
 import java.util.List;
 
@@ -25,54 +25,54 @@ import java.util.List;
  * @author rAy
  */
 public interface CommentDataAccess {
-    
+
     public static enum CommentOrderStrategy {
         ORDERED_BY_DATE_ASC, ORDERED_BY_DATE_DESC
     }
-    
+
     Comment getCommentById(long commentId) throws DataAccessException;
-    
+
     List<Comment> getComments() throws DataAccessException;
-    
+
     List<Comment> getComments(long offset, long limit) throws DataAccessException;
-    
+
     List<Comment> getRecentComments(long number) throws DataAccessException;
-    
+
     List<Comment> getCommentsByParentCommentId(
             long parentCommentId) throws DataAccessException;
-    
+
     List<Comment> getCommentsByParentCommentId(
             long parentCommentId, CommentOrderStrategy strategy)
             throws DataAccessException;
-    
+
     List<Comment> getCommentsByPostId(long postId)
             throws DataAccessException;
-    
+
     List<Comment> getCommentsByPostId(long postId,
             CommentOrderStrategy strategy) throws DataAccessException;
-    
+
     long getCommentNumber() throws DataAccessException;
-    
+
     void updateComment(long commentId, String content) throws DataAccessException;
-    
+
     long addNewComment(Comment comment) throws DataAccessException;
-    
+
     long addNewComment(long postId, long userId, String content, Date date)
             throws DataAccessException;
-    
+
     long addNewComment(long postId, long userId, String content,
             long parentCommentId, Date date) throws DataAccessException;
-    
+
     long addNewComment(long postId, String authorName, String authorEmail,
             String authorHomePageURL, String content, Date date) throws DataAccessException;
-    
+
     long addNewComment(long postId, String authorName, String authorEmail,
             String authorHomePageURL, String content,
             long parentCommentId, Date date) throws DataAccessException;
-    
+
     void deleteCommentById(long commentId) throws DataAccessException;
-    
+
     void deleteCommentsByPostId(long postId)
             throws DataAccessException;
-    
+
 }

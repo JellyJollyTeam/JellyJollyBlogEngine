@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cn.edu.seu.cose.jellyjolly.model.dao;
+package cn.edu.seu.cose.jellyjolly.dao;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPage;
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPageBar;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPage;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPageBar;
 import java.util.List;
 
 /**
@@ -25,27 +25,27 @@ import java.util.List;
  * @author rAy <predator.ray@gmail.com>
  */
 public interface BlogPageDataAccess {
-    
+
     List<String> getPageTitleList() throws DataAccessException;
-    
+
     List<BlogPageBar> getPageBarList() throws DataAccessException;
-    
+
     List<BlogPage> getAllPages() throws DataAccessException;
-    
+
     int getPageCount() throws DataAccessException;
-    
+
     BlogPage getPage(int pageId) throws DataAccessException;
-    
+
     int addNewPage(BlogPage page) throws DataAccessException;
-    
+
     int addNewPage(String title, String content) throws DataAccessException;
-    
+
     void changeTitle(int pageId, String title) throws DataAccessException;
-    
+
     void changeContent(int pageId, String content) throws DataAccessException;
-    
+
     void editPage(BlogPage page) throws DataAccessException;
-    
+
     void deletePage(int pageId) throws DataAccessException;
-    
+
 }

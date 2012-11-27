@@ -17,10 +17,10 @@
 
 package cn.edu.seu.cose.jellyjolly.model.dao.jdbc;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPage;
-import cn.edu.seu.cose.jellyjolly.model.bean.BlogPageBar;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPageDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPage;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPageBar;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

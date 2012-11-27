@@ -16,14 +16,14 @@
  */
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.model.bean.AdminUser;
-import cn.edu.seu.cose.jellyjolly.model.bean.Category;
-import cn.edu.seu.cose.jellyjolly.model.dao.BlogPostDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.CategoryDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.CommentDataAccess;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.model.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.model.session.UserAuthorization;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
@@ -44,42 +44,42 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "BlogPostOperation", urlPatterns = {"/admin/post"})
 public class BlogPostOperation extends HttpServlet {
-    
+
     private static final String PARAM_OPERATION = "op";
-    
+
     private static final String PARAM_POST_ID = "postid";
-    
+
     private static final String PARAM_TITLE = "title";
-    
+
     private static final String PARAM_CONTENT = "content";
-    
+
     private static final String PARAM_CATEGORY_ID = "categoryid";
-    
+
     private static final String PARAM_CATEGORY_NAME = "categoryname";
-    
+
     private static final String OP_POST = "post";
-    
+
     private static final String OP_EDIT = "edit";
-    
+
     private static final String OP_DELETE = "del";
-    
+
     private static final String HOME_URL = "../home.jsp";
-    
+
     private static final String BLOG_POST_URL = "../post.jsp?postid=";
-    
+
     private static final Logger logger = Logger.getLogger(
             BlogPostOperation.class.getName());
-    
+
     private BlogPostDataAccess blogPostDao;
-    
+
     private CategoryDataAccess categoryDao;
-    
+
     private CommentDataAccess commentDao;
-    
+
     private static String getRedirectUrl(long postId) {
         return new StringBuilder().append(BLOG_POST_URL).append(postId).toString();
     }
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         DataAccessFactoryManager manager =
@@ -120,7 +120,7 @@ public class BlogPostOperation extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
         String operation = request.getParameter(PARAM_OPERATION);
-        
+
         if (OP_POST.equalsIgnoreCase(operation)) {
             post(request, response);
             return;
@@ -133,10 +133,10 @@ public class BlogPostOperation extends HttpServlet {
             delete(request, response);
             return;
         }
-        
+
         response.sendError(400);
     }
-    
+
     private void post(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
@@ -144,7 +144,7 @@ public class BlogPostOperation extends HttpServlet {
         String content = request.getParameter(PARAM_CONTENT);
         String categoryIdParam = request.getParameter(PARAM_CATEGORY_ID);
         String categoryName = request.getParameter(PARAM_CATEGORY_NAME);
-        
+
         // invalid user input
         if (title == null || content == null
                 || (categoryIdParam == null && categoryName == null)
@@ -152,13 +152,13 @@ public class BlogPostOperation extends HttpServlet {
             response.sendError(400);
             return;
         }
-        
+
         AdminUser user = getUser(request);
         // cannot get user object
         if (user == null) {
             return;
         }
-        
+
         try {
             Category newCategory = (categoryName != null)
                     ? categoryDao.createNewCategory(categoryName)
@@ -168,7 +168,7 @@ public class BlogPostOperation extends HttpServlet {
                     : newCategory.getCategoryId();
             // String[] tags = tagsParam.split(",\\s*"); // TIP: tags not supported yet
             long userId = user.getUserId();
-            
+
             Date currentDate = new Date();
             long postId = blogPostDao.createNewPost(userId, catetoryId,
                     currentDate, title, content);
@@ -181,7 +181,7 @@ public class BlogPostOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private void edit(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
@@ -189,16 +189,16 @@ public class BlogPostOperation extends HttpServlet {
         String title = request.getParameter(PARAM_TITLE);
         String content = request.getParameter(PARAM_CONTENT);
         String categoryIdParam = request.getParameter(PARAM_CATEGORY_ID);
-        
+
         // invalid user input
         if (!Utils.isNumeric(postIdParam)) {
             response.sendError(400);
             return;
         }
-        
+
         try {
             long postId = Long.valueOf(postIdParam);
-            
+
             if (title != null) {
                 blogPostDao.updatePostTitle(postId, title);
             }
@@ -218,7 +218,7 @@ public class BlogPostOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private void delete(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
@@ -228,7 +228,7 @@ public class BlogPostOperation extends HttpServlet {
             response.sendError(400);
             return;
         }
-        
+
         try {
             long postId = Long.valueOf(postIdParam);
             blogPostDao.deletePost(postId);
@@ -242,7 +242,7 @@ public class BlogPostOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-    
+
     private AdminUser getUser(HttpServletRequest request) {
         HttpSession session = request.getSession();
         UserAuthorization userAuth = (UserAuthorization)
