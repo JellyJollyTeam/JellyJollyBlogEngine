@@ -161,8 +161,9 @@ public class BlogPostDataAccessImpl implements BlogPostDataAccess {
             "SELECT COUNT(1) FROM jj_blog_posts WHERE category_id=?;";
 
     private static final String STATEMENT_GET_POSTS_NUM_BY_KEYWORD =
-            "SELECT count(1) FROM jj_blog_posts WHERE MATCH(post_title) AGAINST(?) "
-            + "OR MATCH(post_content) AGAINST(?);";
+            "SELECT COUNT(1) FROM jj_blog_posts WHERE "
+            + "post_title LIKE CONCAT('%', ?, '%') "
+            + "OR post_content LIKE CONCAT('%', ?, '%') ";
 
     private static final String STATEMENT_CREATE_NEW_POST =
             "INSERT INTO jj_blog_posts(author_user_id, category_id, post_date,"
