@@ -33,7 +33,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class AdminUserMetaDataAccess extends AbstractDataAccess {
+class AdminUserMetaDataAccess extends AbstractDataAccess {
 
     private static final String COLUMN_META_KEY = "meta_key";
     private static final String COLUMN_META_VALUE = "meta_value";
