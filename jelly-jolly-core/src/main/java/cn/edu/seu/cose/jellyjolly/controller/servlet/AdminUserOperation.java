@@ -14,20 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,46 +42,27 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminUserOperation extends HttpServlet {
 
     private static final String PARAM_OPERATION = "op";
-
     private static final String PARAM_USER_ID = "userid";
-
     private static final String PARAM_USERNAME = "username";
-
     private static final String PARAM_PREVIOUS_PASS = "prvpass";
-
     private static final String PARAM_NEW_PASS = "newpass";
-
     private static final String PARAM_EMAIL = "email";
-
     private static final String PARAM_HOME_PAGE = "homepage";
-
     private static final String PARAM_DISPLAY_NAME = "displayname";
-
     private static final String OP_ADD = "add";
-
     private static final String OP_EDIT = "edit";
-
     private static final String OP_DELETE = "del";
-
     private static final String USERS_URL = "./users.jsp";
-
     private static final String HOME_URL = "../home.jsp";
-
     private static final Logger logger = Logger.getLogger(
             AdminUserOperation.class.getName());
-
-    private AdminUserDataAccess adminUserDao;
-
-    private static AdminUserDataAccess getAdminUserDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getAdminUserDataAccess();
-    }
+    private AdminUserDataAccess adminUserDataAccess;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        adminUserDao = getAdminUserDataAccess();
+        ServletContext ctx = config.getServletContext();
+        adminUserDataAccess = (AdminUserDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.adminUserDataAccess");
     }
 
     /**
@@ -99,7 +80,6 @@ public class AdminUserOperation extends HttpServlet {
             throws ServletException, IOException {
         doPost(request, response);
     }
-
 
     /**
      * Handles the HTTP
@@ -140,7 +120,8 @@ public class AdminUserOperation extends HttpServlet {
         String email = request.getParameter(PARAM_EMAIL);
         String homePage = request.getParameter(PARAM_HOME_PAGE);
         String displayName = request.getParameter(PARAM_DISPLAY_NAME);
-        if (username == null || password == null || email == null || displayName == null) {
+        if (username == null || password == null || email == null
+                || displayName == null) {
             response.sendError(400);
             return;
         }
@@ -148,11 +129,11 @@ public class AdminUserOperation extends HttpServlet {
         try {
             Date currentDate = new Date();
             if (homePage == null) {
-               adminUserDao.addNewUser(username, password, email, displayName,
-                       currentDate);
+                adminUserDataAccess.addNewUser(username, password, email,
+                        displayName, currentDate);
             } else {
-                adminUserDao.addNewUser(username, password, email, homePage, displayName,
-                        currentDate);
+                adminUserDataAccess.addNewUser(username, password, email,
+                        homePage, displayName, currentDate);
             }
             response.sendRedirect(USERS_URL);
         } catch (DataAccessException ex) {
@@ -179,11 +160,12 @@ public class AdminUserOperation extends HttpServlet {
 
         try {
             long userId = Long.valueOf(userIdParam);
-            AdminUser currentUser = adminUserDao.getUser(userId);
+            AdminUser currentUser = adminUserDataAccess.getUser(userId);
 
             if (newPassword != null && (previousPass == null
-                    || !adminUserDao.confirm(currentUser.getUsername(), previousPass))) {
-                    response.sendError(401);
+                    || !adminUserDataAccess.confirm(currentUser.getUsername(),
+                    previousPass))) {
+                response.sendError(401);
             }
 
             if (username != null) {
@@ -202,7 +184,7 @@ public class AdminUserOperation extends HttpServlet {
                 currentUser.setHomePageUrl(homePage);
             }
 
-            adminUserDao.updateUser(currentUser);
+            adminUserDataAccess.updateUser(currentUser);
             response.sendRedirect(USERS_URL);
         } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -225,7 +207,7 @@ public class AdminUserOperation extends HttpServlet {
 
         try {
             long userId = Long.valueOf(userIdParam);
-            adminUserDao.deleteUser(userId);
+            adminUserDataAccess.deleteUser(userId);
             response.sendRedirect(USERS_URL);
         } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -235,5 +217,4 @@ public class AdminUserOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-
 }

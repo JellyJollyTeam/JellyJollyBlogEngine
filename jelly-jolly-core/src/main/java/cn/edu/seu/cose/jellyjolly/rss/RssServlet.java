@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.rss;
 
+import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
+import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
@@ -25,6 +27,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,20 +41,33 @@ import javax.servlet.http.HttpServletResponse;
 public class RssServlet extends HttpServlet {
 
     private static final String CONTENT_TYPE = "application/xml; charset=UTF-8";
-
     private static final String PARAM_FEED_TYPE = "type";
-
     private static final Logger logger = Logger.getLogger(
             RssServlet.class.getName());
+    private AdminUserDataAccess adminUserDataAccess;
+    private BlogInfoDataAccess blogInfoDataAccess;
+    private BlogPostDataAccess blogPostDataAccess;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+    public void init(ServletConfig config) throws ServletException {
+        ServletContext ctx = config.getServletContext();
+        adminUserDataAccess = (AdminUserDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.adminUserDataAccess");
+        blogInfoDataAccess = (BlogInfoDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogInfoDataAccess");
+        blogPostDataAccess = (BlogPostDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPostDataAccess");
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response) throws IOException, ServletException {
         String feedType = request.getParameter(PARAM_FEED_TYPE);
         response.setContentType(CONTENT_TYPE);
         PrintWriter out = response.getWriter();
         try {
-            RssBuilder rssBuilder = RssBuilder.getInstance();
+            RssBuilder rssBuilder = new RssBuilder(adminUserDataAccess,
+                    blogInfoDataAccess, blogPostDataAccess);
             if (feedType == null) {
                 rssBuilder.buildSyndFeed();
             } else {
@@ -69,5 +86,4 @@ public class RssServlet extends HttpServlet {
             out.close();
         }
     }
-
 }

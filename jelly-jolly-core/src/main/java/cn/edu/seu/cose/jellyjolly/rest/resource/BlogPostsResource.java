@@ -14,12 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPostInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPosts;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CategoryInstance;
@@ -43,19 +41,12 @@ import org.restlet.resource.ServerResource;
 public class BlogPostsResource extends ServerResource {
 
     private static final String PARAM_OFFSET = "offset";
-
     private static final String PARAM_LIMIT = "limit";
-
     private static final Logger logger = Logger.getLogger(
             BlogPostsResource.class.getName());
-
     private BlogPostDataAccess blogPostDao;
 
     public BlogPostsResource() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        blogPostDao = factory.getBlogPostDataAccess();
     }
 
     @Get("xml")
@@ -97,7 +88,7 @@ public class BlogPostsResource extends ServerResource {
             List<Property> postProperties = newPostInstance.getProperties();
             long postId = blogPostDao.createNewPost(userId, categoryId,
                     currentDate, title, content);
-            for (Property p: postProperties) {
+            for (Property p : postProperties) {
                 String key = p.getKey();
                 List<String> values = p.getValues().getValue();
                 String[] valueArr = values.toArray(new String[0]);
@@ -109,5 +100,4 @@ public class BlogPostsResource extends ServerResource {
             return ResourceUtils.getFailureRepresentation(ex);
         }
     }
-
 }

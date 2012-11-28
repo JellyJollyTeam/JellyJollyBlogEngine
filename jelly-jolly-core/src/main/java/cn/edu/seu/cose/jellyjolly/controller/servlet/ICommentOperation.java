@@ -23,25 +23,14 @@ package cn.edu.seu.cose.jellyjolly.controller.servlet;
 public interface ICommentOperation {
 
     public static final String PARAM_OPERATION = "op";
-
     public static final String PARAM_COMMENT_ID = "commentid";
-
     public static final String PARAM_PARENT_COMMENT_ID = "parentid";
-
     public static final String PARAM_BLOG_POST_ID = "postid";
-
     public static final String PARAM_AUTHOR_NAME = "authorname";
-
     public static final String PARAM_AUTHOR_EMAIL = "email";
-
     public static final String PARAM_AUTHOR_HOMEPAGE = "homepage";
-
     public static final String PARAM_CONTENT = "content";
-
     public static final String OP_ADD = "add";
-
     public static final String OP_DEL = "del";
-
     public static final String POST_URL = "./post.jsp?postid=";
-
 }

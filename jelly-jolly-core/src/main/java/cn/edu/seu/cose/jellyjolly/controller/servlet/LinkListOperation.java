@@ -14,19 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.dto.Link;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.dao.LinkDataAccess;
+import cn.edu.seu.cose.jellyjolly.dto.Link;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -41,33 +39,23 @@ import javax.servlet.http.HttpServletResponse;
 public class LinkListOperation extends HttpServlet {
 
     private static final String PARAM_OPERATION = "op";
-
     private static final String PARAM_TITLE = "title";
-
     private static final String PARAM_IMAGE = "image";
-
     private static final String PARAM_URL = "url";
-
     private static final String PARAM_LINK_ID = "linkid";
-
     private static final String OP_ADD = "add";
-
     private static final String OP_EDIT = "edit";
-
     private static final String OP_DELETE = "del";
-
     private static final String LINK_PAGE_URL = "./links.jsp";
-
     private static final Logger logger = Logger.getLogger(
             LinkListOperation.class.getName());
-
-    private LinkDataAccess linkDao;
+    private LinkDataAccess linkDataAccess;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        linkDao = factory.getLinkDataAccess();
+        ServletContext ctx = config.getServletContext();
+        linkDataAccess = (LinkDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.linkDataAccess");
     }
 
     @Override
@@ -109,9 +97,9 @@ public class LinkListOperation extends HttpServlet {
 
         try {
             if (image == null) {
-                linkDao.createNewLink(title, url);
+                linkDataAccess.createNewLink(title, url);
             } else {
-                linkDao.createNewLink(title, image, url);
+                linkDataAccess.createNewLink(title, image, url);
             }
             response.sendRedirect(LINK_PAGE_URL);
         } catch (DataAccessException ex) {
@@ -133,7 +121,7 @@ public class LinkListOperation extends HttpServlet {
 
         try {
             long linkId = Long.valueOf(linkIdParam);
-            Link link = linkDao.getLinkById(linkId);
+            Link link = linkDataAccess.getLinkById(linkId);
             if (title != null) {
                 link.setTitle(title);
             }
@@ -143,7 +131,7 @@ public class LinkListOperation extends HttpServlet {
             if (url != null) {
                 link.setUrl(url);
             }
-            linkDao.updateLink(link);
+            linkDataAccess.updateLink(link);
             response.sendRedirect(LINK_PAGE_URL);
         } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -164,7 +152,7 @@ public class LinkListOperation extends HttpServlet {
 
         try {
             long linkId = Long.valueOf(linkIdParam);
-            linkDao.deleteLink(linkId);
+            linkDataAccess.deleteLink(linkId);
             response.sendRedirect(LINK_PAGE_URL);
         } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -174,5 +162,4 @@ public class LinkListOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-
 }

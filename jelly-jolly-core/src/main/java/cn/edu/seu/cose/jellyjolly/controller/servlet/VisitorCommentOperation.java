@@ -14,18 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
 import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,19 +41,19 @@ public class VisitorCommentOperation extends HttpServlet
 
     private static final String INFO_INVALID_INPUT =
             "VisitorComment: invalid user input";
-
     private static final Logger logger = Logger.getLogger(
             VisitorCommentOperation.class.getName());
-
-    private static CommentDataAccess getCommentDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getCommentDataAccess();
-    }
+    private CommentDataAccess commentDataAccess;
 
     private static String getRedirectUrl(long postId) {
         return new StringBuilder().append(POST_URL).append(postId).toString();
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        ServletContext ctx = config.getServletContext();
+        commentDataAccess = (CommentDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.commentDataAccess");
     }
 
     /**
@@ -103,7 +102,6 @@ public class VisitorCommentOperation extends HttpServlet
 
         try {
             long postId = Long.valueOf(postIdParam);
-            CommentDataAccess commentDataAccess = getCommentDataAccess();
             // without parent comment
             if (parentIdParam == null) {
                 commentDataAccess.addNewComment(postId, authorName, authorName, homePage,
@@ -112,7 +110,7 @@ public class VisitorCommentOperation extends HttpServlet
             // with parent comment
             if (parentIdParam != null) {
                 long parentCommentId = Long.valueOf(parentIdParam);
-                commentDataAccess.addNewComment(postId,authorName, authorName, homePage,
+                commentDataAccess.addNewComment(postId, authorName, authorName, homePage,
                         content, parentCommentId, new Date());
             }
             response.sendRedirect(getRedirectUrl(postId));
@@ -124,5 +122,4 @@ public class VisitorCommentOperation extends HttpServlet
             response.sendError(500, ex.getMessage());
         }
     }
-
 }

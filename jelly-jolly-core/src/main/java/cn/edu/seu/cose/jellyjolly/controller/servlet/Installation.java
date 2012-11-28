@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "Installation", urlPatterns = {"/install"})
 public class Installation extends HttpServlet {
-    
+
     /**
      * Handles the HTTP
      * <code>POST</code> method.
@@ -46,5 +45,4 @@ public class Installation extends HttpServlet {
             throws ServletException, IOException {
         // install the application
     }
-
 }

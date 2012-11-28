@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
 import java.io.IOException;
@@ -30,7 +29,8 @@ import javax.servlet.http.HttpSession;
  * @author rAy <predator.ray@gmail.com>
  */
 @WebServlet(name = "Comment", urlPatterns = {"/comment"})
-public class CommentOperation extends HttpServlet implements ICommentOperation {
+public class CommentOperation
+        extends HttpServlet implements ICommentOperation {
 
     /**
      * Handles the HTTP
@@ -47,7 +47,7 @@ public class CommentOperation extends HttpServlet implements ICommentOperation {
             throws ServletException, IOException {
         doPost(request, response);
     }
-    
+
     /**
      * Handles the HTTP
      * <code>POST</code> method.
@@ -62,12 +62,13 @@ public class CommentOperation extends HttpServlet implements ICommentOperation {
             HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        
+
         if (session.getAttribute(AdminUserLogin.SESSION_ATTRI_AUTH) != null) {
-            request.getRequestDispatcher("/admin/comment").forward(request, response);
+            request.getRequestDispatcher("/admin/comment").forward(request,
+                    response);
             return;
         }
-        request.getRequestDispatcher("/visitor/comment").forward(request, response);
+        request.getRequestDispatcher("/visitor/comment").forward(request,
+                response);
     }
-
 }

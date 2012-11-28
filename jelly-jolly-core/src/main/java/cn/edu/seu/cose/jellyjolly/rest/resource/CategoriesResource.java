@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.rest.dto.Categories;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CategoryInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.adapter.Adapter;
@@ -44,14 +42,9 @@ public class CategoriesResource extends ServerResource {
 
     private static final Logger logger = Logger.getLogger(
             CategoriesResource.class.getName());
-
     private CategoryDataAccess categoryDao;
 
     public CategoriesResource() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        categoryDao = factory.getCategoryDataAccess();
     }
 
     @Get("xml")
@@ -73,8 +66,7 @@ public class CategoriesResource extends ServerResource {
         try {
             DomRepresentation domCategory = new DomRepresentation(newCategory);
             DomRepresentationReader reader = new DomRepresentationReader();
-            CategoryInstance categoryInstance = (CategoryInstance)
-                    reader.getXmlObject(domCategory, CategoryInstance.class);
+            CategoryInstance categoryInstance = (CategoryInstance) reader.getXmlObject(domCategory, CategoryInstance.class);
             categoryDao.createNewCategory(categoryInstance.getName());
             return ResourceUtils.getUpdateSuccessRepresentation();
         } catch (Exception ex) {
@@ -82,5 +74,4 @@ public class CategoriesResource extends ServerResource {
             return ResourceUtils.getFailureRepresentation(ex);
         }
     }
-
 }

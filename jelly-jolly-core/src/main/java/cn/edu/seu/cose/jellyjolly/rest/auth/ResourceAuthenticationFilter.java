@@ -19,9 +19,9 @@ package cn.edu.seu.cose.jellyjolly.rest.auth;
 
 import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,19 +34,19 @@ public class ResourceAuthenticationFilter extends AuthenticationFilter {
 
     private static final long THIRTY_MINS_IN_MILLIS = 1000 * 60 * 60 * 30;
 
-    private AdminUserDataAccess adminUserDao;
+    private AdminUserDataAccess adminUserDataAccess;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        adminUserDao = factory.getAdminUserDataAccess();
+        ServletContext ctx = config.getServletContext();
+        adminUserDataAccess = (AdminUserDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.adminUserDataAccess");
     }
 
     @Override
     protected boolean authenticate(String username, String password)
             throws Exception {
-        return adminUserDao.confirm(username, password);
+        return adminUserDataAccess.confirm(username, password);
     }
 
     @Override

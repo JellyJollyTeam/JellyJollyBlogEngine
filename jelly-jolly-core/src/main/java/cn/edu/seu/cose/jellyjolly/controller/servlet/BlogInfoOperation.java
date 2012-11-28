@@ -18,11 +18,11 @@ package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
 import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,12 +39,13 @@ public class BlogInfoOperation extends HttpServlet {
     private static final String PARAM_TITLE = "title";
     private static final String PARAM_SUBTITLE = "subtitle";
     private static final String PARAM_URL = "url";
+    private BlogInfoDataAccess blogInfoDataAccess;
 
-    private static BlogInfoDataAccess getBlogInfoDataAccess() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        return factory.getBlogInfoDataAccess();
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        ServletContext ctx = config.getServletContext();
+        blogInfoDataAccess = (BlogInfoDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogInfoDataAccess");
     }
 
     @Override
@@ -54,17 +55,15 @@ public class BlogInfoOperation extends HttpServlet {
         String subtitle = request.getParameter(PARAM_SUBTITLE);
         String url = request.getParameter(PARAM_URL);
 
-        BlogInfoDataAccess blogInfoDao = getBlogInfoDataAccess();
-
         try {
             if (title != null) {
-                blogInfoDao.setBlogTitle(title);
+                blogInfoDataAccess.setBlogTitle(title);
             }
             if (subtitle != null) {
-                blogInfoDao.setBlogSubTitle(subtitle);
+                blogInfoDataAccess.setBlogSubTitle(subtitle);
             }
             if (url != null) {
-                blogInfoDao.setBlogUrl(url);
+                blogInfoDataAccess.setBlogUrl(url);
             }
             response.sendRedirect("./options.jsp");
         } catch (DataAccessException ex) {

@@ -17,10 +17,9 @@
 
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
 import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogInfoInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.Property;
 import cn.edu.seu.cose.jellyjolly.rest.dto.Values;
@@ -46,9 +45,6 @@ public class BlogInfoResource extends ServerResource {
     private BlogInfoDataAccess blogInfoDao;
 
     public BlogInfoResource() {
-        DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        blogInfoDao = factory.getBlogInfoDataAccess();
     }
 
     @Get("xml")

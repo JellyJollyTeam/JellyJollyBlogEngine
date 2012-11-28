@@ -14,13 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.rest.JellyJollyRouter;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CategoryInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.adapter.Adapter;
@@ -44,25 +42,18 @@ public class CategoryInstanceResource extends ServerResource {
 
     private static final String ILLEGAL_PARAM_MSG =
             "parameter: category-id should be numeric";
-
     private static final Logger logger = Logger.getLogger(
             CategoryInstanceResource.class.getName());
-
     private CategoryDataAccess categoryDao;
 
     public CategoryInstanceResource() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        categoryDao = factory.getCategoryDataAccess();
     }
 
     @Get("xml")
     public Representation getCategory() {
         try {
             Map<String, Object> requestAttributes = getRequestAttributes();
-            String categoryIdParam = (String)
-                    requestAttributes.get(JellyJollyRouter.PARAM_CATEGORY_ID);
+            String categoryIdParam = (String) requestAttributes.get(JellyJollyRouter.PARAM_CATEGORY_ID);
             if (!Utils.isNumeric(categoryIdParam)) {
                 throw new IllegalArgumentException(ILLEGAL_PARAM_MSG);
             }
@@ -83,8 +74,7 @@ public class CategoryInstanceResource extends ServerResource {
         try {
             DomRepresentation domCategory = new DomRepresentation(newCategory);
             DomRepresentationReader reader = new DomRepresentationReader();
-            CategoryInstance categoryInstance = (CategoryInstance)
-                    reader.getXmlObject(domCategory, CategoryInstance.class);
+            CategoryInstance categoryInstance = (CategoryInstance) reader.getXmlObject(domCategory, CategoryInstance.class);
             categoryDao.createNewCategory(categoryInstance.getName());
             return ResourceUtils.getUpdateSuccessRepresentation();
         } catch (Exception ex) {
@@ -110,5 +100,4 @@ public class CategoryInstanceResource extends ServerResource {
             return ResourceUtils.getFailureRepresentation(ex);
         }
     }
-
 }

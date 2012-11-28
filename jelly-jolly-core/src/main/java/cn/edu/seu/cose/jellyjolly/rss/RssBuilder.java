@@ -14,19 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.rss;
 
-import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
-import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
-import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess.BlogPostOrderStrategy;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndCategoryImpl;
 import com.sun.syndication.feed.synd.SyndContent;
@@ -49,25 +47,11 @@ import java.util.List;
 public class RssBuilder {
 
     private static final String DEFAULT_FEED_TYPE = "rss_2.0";
-
     private static final int SUMMARY_LENGTH = 300;
-
-    private static RssBuilder instance;
-
-    private AdminUserDataAccess adminUserDao;
-
-    private BlogInfoDataAccess blogInfoDao;
-
-    private BlogPostDataAccess blogPostDao;
-
+    private AdminUserDataAccess adminUserDataAccess;
+    private BlogInfoDataAccess blogInfoDataAccess;
+    private BlogPostDataAccess blogPostDataAccess;
     private SyndFeed feedProduct;
-
-    public static RssBuilder getInstance() {
-        if (instance == null) {
-            instance = new RssBuilder();
-        }
-        return instance;
-    }
 
     private static SyndEntry parsePost(BlogPost post) {
         SyndEntry entry = new SyndEntryImpl();
@@ -99,12 +83,12 @@ public class RssBuilder {
         return entry;
     }
 
-    protected RssBuilder() {
-        DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        adminUserDao = factory.getAdminUserDataAccess();
-        blogInfoDao = factory.getBlogInfoDataAccess();
-        blogPostDao = factory.getBlogPostDataAccess();
+    public RssBuilder(AdminUserDataAccess adminUserDataAccess,
+            BlogInfoDataAccess blogInfoDataAccess,
+            BlogPostDataAccess blogPostDataAccess) {
+        this.adminUserDataAccess = adminUserDataAccess;
+        this.blogInfoDataAccess = blogInfoDataAccess;
+        this.blogPostDataAccess = blogPostDataAccess;
     }
 
     public SyndFeed getSyndFeed() {
@@ -130,7 +114,7 @@ public class RssBuilder {
         feedProduct = new SyndFeedImpl();
         feedProduct.setFeedType(feedType);
 
-        BlogInfo blogInfo = blogInfoDao.getBlogInfoInstance();
+        BlogInfo blogInfo = blogInfoDataAccess.getBlogInfoInstance();
         // description
         feedProduct.setDescription(blogInfo.getBlogTitle());
         // title
@@ -143,13 +127,13 @@ public class RssBuilder {
         feedProduct.setLink((link == null) ? "" : link);
 
         // pubDate
-        Date pubDate = blogPostDao.getLatestPubDate();
+        Date pubDate = blogPostDataAccess.getLatestPubDate();
         feedProduct.setPublishedDate(pubDate);
 
         // authors
-        List<AdminUser> usrLst = adminUserDao.getAllUsers();
+        List<AdminUser> usrLst = adminUserDataAccess.getAllUsers();
         List<SyndPerson> nameList = new LinkedList<SyndPerson>();
-        for (AdminUser usr: usrLst) {
+        for (AdminUser usr : usrLst) {
             String authorName = usr.getDisplayName();
             String email = usr.getEmail();
             SyndPerson person = new SyndPersonImpl();
@@ -161,16 +145,15 @@ public class RssBuilder {
     }
 
     private void buildEntries() throws DataAccessException {
-            List<SyndEntry> entries = new LinkedList<SyndEntry>();
+        List<SyndEntry> entries = new LinkedList<SyndEntry>();
 
-            List<BlogPost> postList = blogPostDao.getPosts(0, 100,
-                    BlogPostOrderStrategy.ORDERED_BY_DATE_DESC);
-            for (BlogPost post: postList) {
-                SyndEntry entry = parsePost(post);
-                entries.add(entry);
-            }
+        List<BlogPost> postList = blogPostDataAccess.getPosts(0, 100,
+                BlogPostOrderStrategy.ORDERED_BY_DATE_DESC);
+        for (BlogPost post : postList) {
+            SyndEntry entry = parsePost(post);
+            entries.add(entry);
+        }
 
-            feedProduct.setEntries(entries);
+        feedProduct.setEntries(entries);
     }
-
 }

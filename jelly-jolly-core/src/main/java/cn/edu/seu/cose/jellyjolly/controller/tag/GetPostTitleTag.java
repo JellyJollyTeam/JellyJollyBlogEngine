@@ -14,13 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.tag;
 
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -33,19 +31,12 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
  */
 public class GetPostTitleTag extends SimpleTagSupport {
 
-    private BlogPostDataAccess blogPostDao;
-
+    private BlogPostDataAccess blogPostDataAccess;
     private long postId;
 
-    private static BlogPostDataAccess getBlogPostDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getBlogPostDataAccess();
-    }
-
     public GetPostTitleTag() {
-            blogPostDao = getBlogPostDataAccess();
+        blogPostDataAccess = (BlogPostDataAccess) getJspContext().getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPostDataAccess");
     }
 
     public void setPostId(Object postId) {
@@ -55,7 +46,7 @@ public class GetPostTitleTag extends SimpleTagSupport {
     @Override
     public void doTag() throws IOException {
         try {
-            BlogPost post = blogPostDao.getPostById(postId);
+            BlogPost post = blogPostDataAccess.getPostById(postId);
             String title = post.getTitle();
             getJspContext().getOut().print(title);
         } catch (DataAccessException ex) {
@@ -63,5 +54,4 @@ public class GetPostTitleTag extends SimpleTagSupport {
                     .log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
-
 }

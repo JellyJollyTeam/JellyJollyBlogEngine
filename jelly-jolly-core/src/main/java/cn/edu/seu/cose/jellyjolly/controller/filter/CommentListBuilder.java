@@ -18,8 +18,6 @@ package cn.edu.seu.cose.jellyjolly.controller.filter;
 
 import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;

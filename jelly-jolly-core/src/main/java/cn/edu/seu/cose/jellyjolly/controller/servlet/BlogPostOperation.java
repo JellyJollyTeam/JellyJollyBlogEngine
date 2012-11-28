@@ -16,14 +16,12 @@
  */
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
-import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.model.session.UserAuthorization;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
@@ -31,6 +29,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -46,48 +45,36 @@ import javax.servlet.http.HttpSession;
 public class BlogPostOperation extends HttpServlet {
 
     private static final String PARAM_OPERATION = "op";
-
     private static final String PARAM_POST_ID = "postid";
-
     private static final String PARAM_TITLE = "title";
-
     private static final String PARAM_CONTENT = "content";
-
     private static final String PARAM_CATEGORY_ID = "categoryid";
-
     private static final String PARAM_CATEGORY_NAME = "categoryname";
-
     private static final String OP_POST = "post";
-
     private static final String OP_EDIT = "edit";
-
     private static final String OP_DELETE = "del";
-
     private static final String HOME_URL = "../home.jsp";
-
     private static final String BLOG_POST_URL = "../post.jsp?postid=";
-
     private static final Logger logger = Logger.getLogger(
             BlogPostOperation.class.getName());
-
-    private BlogPostDataAccess blogPostDao;
-
-    private CategoryDataAccess categoryDao;
-
-    private CommentDataAccess commentDao;
+    private BlogPostDataAccess blogPostDataAccess;
+    private CategoryDataAccess categoryDataAccess;
+    private CommentDataAccess commentDataAccess;
 
     private static String getRedirectUrl(long postId) {
-        return new StringBuilder().append(BLOG_POST_URL).append(postId).toString();
+        return new StringBuilder().append(BLOG_POST_URL).append(postId)
+                .toString();
     }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        DataAccessFactoryManager manager =
-            DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        blogPostDao = factory.getBlogPostDataAccess();
-        categoryDao = factory.getCategoryDataAccess();
-        commentDao = factory.getCommentDataAccess();
+        ServletContext ctx = config.getServletContext();
+        blogPostDataAccess = (BlogPostDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPostDataAccess");
+        categoryDataAccess = (CategoryDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.categoryDataAccess");
+        commentDataAccess = (CommentDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.commentDataAccess");
     }
 
     /**
@@ -161,16 +148,17 @@ public class BlogPostOperation extends HttpServlet {
 
         try {
             Category newCategory = (categoryName != null)
-                    ? categoryDao.createNewCategory(categoryName)
+                    ? categoryDataAccess.createNewCategory(categoryName)
                     : null;
             int catetoryId = (categoryIdParam != null)
                     ? Integer.valueOf(categoryIdParam)
                     : newCategory.getCategoryId();
-            // String[] tags = tagsParam.split(",\\s*"); // TIP: tags not supported yet
+            // String[] tags = tagsParam.split(",\\s*");
+            // TIP: tags not supported yet
             long userId = user.getUserId();
 
             Date currentDate = new Date();
-            long postId = blogPostDao.createNewPost(userId, catetoryId,
+            long postId = blogPostDataAccess.createNewPost(userId, catetoryId,
                     currentDate, title, content);
             response.sendRedirect(getRedirectUrl(postId));
         } catch (NumberFormatException ex) {
@@ -200,14 +188,14 @@ public class BlogPostOperation extends HttpServlet {
             long postId = Long.valueOf(postIdParam);
 
             if (title != null) {
-                blogPostDao.updatePostTitle(postId, title);
+                blogPostDataAccess.updatePostTitle(postId, title);
             }
             if (content != null) {
-                blogPostDao.updatePostContent(postId, content);
+                blogPostDataAccess.updatePostContent(postId, content);
             }
             if (categoryIdParam != null) {
                 int categoryId = Integer.valueOf(categoryIdParam);
-                blogPostDao.updatePostCategory(postId, categoryId);
+                blogPostDataAccess.updatePostCategory(postId, categoryId);
             }
             response.sendRedirect(getRedirectUrl(postId));
         } catch (NumberFormatException ex) {
@@ -231,8 +219,8 @@ public class BlogPostOperation extends HttpServlet {
 
         try {
             long postId = Long.valueOf(postIdParam);
-            blogPostDao.deletePost(postId);
-            commentDao.deleteCommentsByPostId(postId);
+            blogPostDataAccess.deletePost(postId);
+            commentDataAccess.deleteCommentsByPostId(postId);
             response.sendRedirect(HOME_URL);
         } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -245,9 +233,8 @@ public class BlogPostOperation extends HttpServlet {
 
     private AdminUser getUser(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        UserAuthorization userAuth = (UserAuthorization)
-                session.getAttribute(AdminUserLogin.SESSION_ATTRI_AUTH);
+        UserAuthorization userAuth = (UserAuthorization) session.getAttribute(
+                AdminUserLogin.SESSION_ATTRI_AUTH);
         return (userAuth == null) ? null : userAuth.getUser();
     }
-
 }

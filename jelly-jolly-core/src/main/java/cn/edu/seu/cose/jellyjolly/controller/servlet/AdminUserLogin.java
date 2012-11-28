@@ -16,14 +16,14 @@
  */
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import cn.edu.seu.cose.jellyjolly.model.session.UserAuthorization;
 import java.io.IOException;
 import java.util.Date;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,28 +39,25 @@ import javax.servlet.http.HttpSession;
 public class AdminUserLogin extends HttpServlet {
 
     public static final String SESSION_ATTRI_AUTH = "userAuth";
-
     private static final String PARAM_USERNAME = "username";
-
     private static final String PARAM_PASSWORD = "password";
-
     private static final String PARAM_REMEMBER = "rememberMe";
-
     private static final String REMEMBER_VALUE = "true";
-
     private static final String COOKIE_USERNAME = "admin_username";
-
     private static final String COOKIE_PASSWORD = "admin_password";
-
     private static final String LOGIN_PAGE_WITH_ERROR = "./login.jsp?error=1";
-
     private static final String ADMIN_HOME_PAGE_URL = "./admin/admin.jsp";
-
     private static final int A_DAY_SECONDS = 24 * 60 * 60;
-
     private static final long THIRTY_MINUTES_MILLIS = 1000 * 60 * 30;
-
     private static final long DEFAULT_EXPIRE_DELTA = THIRTY_MINUTES_MILLIS;
+    private AdminUserDataAccess adminUserDataAccess;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        ServletContext ctx = config.getServletContext();
+        adminUserDataAccess = (AdminUserDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.adminUserDataAccess");
+    }
 
     /**
      * Handles the HTTP
@@ -72,18 +69,14 @@ public class AdminUserLogin extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter(PARAM_USERNAME);
         String password = request.getParameter(PARAM_PASSWORD);
         String rememberMe = request.getParameter(PARAM_REMEMBER);
-
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        AdminUserDataAccess userDataAccess = factory.getAdminUserDataAccess();
         try {
-            AdminUser user = userDataAccess.getUserIfConfirmed(username, password);
+            AdminUser user = adminUserDataAccess.getUserIfConfirmed(username,
+                    password);
             if (user == null) {
                 doIfNotConfirmed(request, response);
                 return;
@@ -94,7 +87,7 @@ public class AdminUserLogin extends HttpServlet {
                 addCookie(response, user);
             }
             Date currentDate = new Date();
-            userDataAccess.setLastLoginTime(user.getUserId(), currentDate);
+            adminUserDataAccess.setLastLoginTime(user.getUserId(), currentDate);
             doIfConfirmed(session, request, response, user);
         } catch (DataAccessException ex) {
             response.sendError(500, ex.getCause().getMessage());
@@ -105,9 +98,9 @@ public class AdminUserLogin extends HttpServlet {
         // ...
     }
 
-    private void doIfConfirmed(HttpSession session, HttpServletRequest request,
-            HttpServletResponse response, AdminUser user)
-            throws ServletException, IOException {
+    private void doIfConfirmed(HttpSession session,
+            HttpServletRequest request, HttpServletResponse response,
+            AdminUser user) throws ServletException, IOException {
         long currentTimeMillis = System.currentTimeMillis();
         long expireTime = currentTimeMillis + DEFAULT_EXPIRE_DELTA;
         UserAuthorization userAuth = new UserAuthorization(user,
@@ -121,5 +114,4 @@ public class AdminUserLogin extends HttpServlet {
             throws ServletException, IOException {
         response.sendRedirect(LOGIN_PAGE_WITH_ERROR);
     }
-
 }

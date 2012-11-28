@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.rest.resource;
 
-import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import cn.edu.seu.cose.jellyjolly.rest.JellyJollyRouter;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPostInstance;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPosts;
@@ -52,36 +50,24 @@ import org.restlet.resource.ServerResource;
 public class BlogPostInstanceResource extends ServerResource {
 
     private static final String PARAM_OFFSET = "offset";
-
     private static final String PARAM_LIMIT = "limit";
-
     private static final String PARAM_CATEGORY = "category";
-
     private static final String PARAM_AUTHOR = "author";
-
     private static final String PARAM_YEAR = "year";
-
     private static final String PARAM_MONTH = "month";
-
     private static final String PARAM_KEYWORD = "keyword";
-
     private static final String ILLEGAL_PARAM_MSG =
             "parameter: blog-post-id should be numeric";
-
     private static final Logger logger = Logger.getLogger(
             BlogPostInstanceResource.class.getName());
-
     private BlogPostDataAccess blogPostDao;
 
     private static Representation handleException(Exception ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            return ResourceUtils.getFailureRepresentation(ex);
+        logger.log(Level.SEVERE, ex.getMessage(), ex);
+        return ResourceUtils.getFailureRepresentation(ex);
     }
 
     public BlogPostInstanceResource() {
-        DataAccessFactoryManager manager = DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        blogPostDao = factory.getBlogPostDataAccess();
     }
 
     @Get("xml")
@@ -116,7 +102,7 @@ public class BlogPostInstanceResource extends ServerResource {
             List<Property> postProperties = newPostInstance.getProperties();
             long postId = blogPostDao.createNewPost(userId, categoryId,
                     currentDate, title, content);
-            for (Property p: postProperties) {
+            for (Property p : postProperties) {
                 String key = p.getKey();
                 List<String> values = p.getValues().getValue();
                 String[] valueArr = values.toArray(new String[0]);
@@ -149,7 +135,7 @@ public class BlogPostInstanceResource extends ServerResource {
             throws DataAccessException {
         try {
             // offset and limit cannot be null or non-numeric
-            if(!valuesMap.containsKey(PARAM_OFFSET)
+            if (!valuesMap.containsKey(PARAM_OFFSET)
                     || !valuesMap.containsKey(PARAM_LIMIT)
                     || !Utils.isNumeric(valuesMap.get(PARAM_OFFSET))
                     || !Utils.isNumeric(valuesMap.get(PARAM_LIMIT))) {
@@ -205,5 +191,4 @@ public class BlogPostInstanceResource extends ServerResource {
             return Collections.EMPTY_LIST;
         }
     }
-
 }

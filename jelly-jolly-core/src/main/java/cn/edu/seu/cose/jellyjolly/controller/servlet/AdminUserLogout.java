@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import javax.servlet.http.HttpSession;
 public class AdminUserLogout extends HttpServlet {
 
     private static final String LOGIN_PAGE = "./home.jsp";
-    
+
     /**
      * Handles the HTTP
      * <code>GET</code> method.
@@ -44,11 +43,11 @@ public class AdminUserLogout extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         logOut(request, response);
     }
-    
+
     /**
      * Handles the HTTP
      * <code>POST</code> method.
@@ -59,16 +58,15 @@ public class AdminUserLogout extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         logOut(request, response);
     }
-    
-    private void logOut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+
+    private void logOut(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.setAttribute(AdminUserLogin.SESSION_ATTRI_AUTH, null);
         response.sendRedirect(LOGIN_PAGE);
     }
-
 }

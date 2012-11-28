@@ -14,21 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
-import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
-import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import cn.edu.seu.cose.jellyjolly.model.session.UserAuthorization;
 import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,22 +44,21 @@ public class AdminCommentOperation extends HttpServlet
         implements ICommentOperation {
 
     private static final String ADMIN_COMMENT_URL = "./comments.jsp";
-
     private static final String INFO_INVALID_INPUT =
             "AdminCommentOperation: invalid user input";
-
     private static final Logger logger = Logger.getLogger(
             AdminCommentOperation.class.getName());
-
-    private static CommentDataAccess getCommentDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getCommentDataAccess();
-    }
+    private CommentDataAccess commentDataAccess;
 
     private static String getRedirectUrl(long postId) {
         return new StringBuilder().append(POST_URL).append(postId).toString();
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        ServletContext ctx = config.getServletContext();
+        commentDataAccess = (CommentDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.commentDataAccess");
     }
 
     /**
@@ -126,13 +124,11 @@ public class AdminCommentOperation extends HttpServlet
             return;
         }
 
-        CommentDataAccess commentPostDataAccess = getCommentDataAccess();
-
         try {
             long postId = Long.valueOf(postIdParam);
             // without parent comment
             if (parentIdParam == null) {
-                commentPostDataAccess.addNewComment(postId, userId, content,
+                commentDataAccess.addNewComment(postId, userId, content,
                         new Date());
                 response.sendRedirect(getRedirectUrl(postId));
                 return;
@@ -146,7 +142,7 @@ public class AdminCommentOperation extends HttpServlet
             }
 
             long parentCommentId = Long.valueOf(parentIdParam);
-            commentPostDataAccess.addNewComment(postId, userId, content,
+            commentDataAccess.addNewComment(postId, userId, content,
                     parentCommentId, new Date());
             response.sendRedirect(getRedirectUrl(postId));
         } catch (NumberFormatException ex) {
@@ -178,9 +174,8 @@ public class AdminCommentOperation extends HttpServlet
         try {
             long commentId = Long.valueOf(commentIdParam);
 
-            CommentDataAccess commentPostDataAccess = getCommentDataAccess();
-            Comment comment = commentPostDataAccess.getCommentById(commentId);
-            commentPostDataAccess.deleteCommentById(commentId);
+            Comment comment = commentDataAccess.getCommentById(commentId);
+            commentDataAccess.deleteCommentById(commentId);
             response.sendRedirect(ADMIN_COMMENT_URL);
         } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -193,9 +188,8 @@ public class AdminCommentOperation extends HttpServlet
 
     private AdminUser getUser(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        UserAuthorization userAuth = (UserAuthorization)
-                session.getAttribute(AdminUserLogin.SESSION_ATTRI_AUTH);
+        UserAuthorization userAuth = (UserAuthorization) session.getAttribute(
+                AdminUserLogin.SESSION_ATTRI_AUTH);
         return (userAuth == null) ? null : userAuth.getUser();
     }
-
 }

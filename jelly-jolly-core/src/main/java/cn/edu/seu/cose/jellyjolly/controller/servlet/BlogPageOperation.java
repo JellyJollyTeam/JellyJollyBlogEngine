@@ -14,17 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.servlet;
 
 import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,42 +37,28 @@ import javax.servlet.http.HttpServletResponse;
 public class BlogPageOperation extends HttpServlet {
 
     private static final String PARAM_OPERATION = "op";
-
     private static final String PARAM_PAGE_ID = "pageid";
-
     private static final String PARAM_TITLE = "title";
-
     private static final String PARAM_CONTENT = "content";
-
     private static final String OP_POST = "post";
-
     private static final String OP_EDIT = "edit";
-
     private static final String OP_DELETE = "del";
-
     private static final String HOME_URL = "../home.jsp";
-
     private static final String BLOG_PAGE_URL = "../page.jsp?pageid=";
-
     private static final Logger logger = Logger.getLogger(
             BlogPageOperation.class.getName());
-
-    private BlogPageDataAccess blogPageDao;
+    private BlogPageDataAccess blogPageDataAccess;
 
     private static String getRedirectUrl(long postId) {
-        return new StringBuilder().append(BLOG_PAGE_URL).append(postId).toString();
-    }
-
-    private static BlogPageDataAccess getBlogPageDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getBlogPageDataAccess();
+        return new StringBuilder().append(BLOG_PAGE_URL).append(postId)
+                .toString();
     }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        blogPageDao = getBlogPageDataAccess();
+        ServletContext ctx = config.getServletContext();
+        blogPageDataAccess = (BlogPageDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPageDataAccess");
     }
 
     /**
@@ -134,7 +118,7 @@ public class BlogPageOperation extends HttpServlet {
         }
 
         try {
-            int pageId = blogPageDao.addNewPage(title, content);
+            int pageId = blogPageDataAccess.addNewPage(title, content);
             response.sendRedirect(getRedirectUrl(pageId));
         } catch (DataAccessException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -154,10 +138,10 @@ public class BlogPageOperation extends HttpServlet {
         try {
             int pageId = Integer.valueOf(pageIdParam);
             if (title != null) {
-                blogPageDao.changeTitle(pageId, title);
+                blogPageDataAccess.changeTitle(pageId, title);
             }
             if (content != null) {
-                blogPageDao.changeContent(pageId, content);
+                blogPageDataAccess.changeContent(pageId, content);
             }
             response.sendRedirect(getRedirectUrl(pageId));
         } catch (NumberFormatException ex) {
@@ -169,8 +153,8 @@ public class BlogPageOperation extends HttpServlet {
         }
     }
 
-    private void delete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void delete(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         String pageIdParam = request.getParameter(PARAM_PAGE_ID);
         if (pageIdParam == null) {
             response.sendError(400);
@@ -178,7 +162,7 @@ public class BlogPageOperation extends HttpServlet {
 
         try {
             int pageId = Integer.valueOf(pageIdParam);
-            blogPageDao.deletePage(pageId);
+            blogPageDataAccess.deletePage(pageId);
             response.sendRedirect(HOME_URL);
         } catch (NumberFormatException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -188,5 +172,4 @@ public class BlogPageOperation extends HttpServlet {
             response.sendError(500, ex.getMessage());
         }
     }
-
 }
