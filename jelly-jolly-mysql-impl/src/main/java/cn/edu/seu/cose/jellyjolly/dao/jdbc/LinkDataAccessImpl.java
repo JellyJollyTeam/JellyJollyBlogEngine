@@ -34,7 +34,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class LinkDataAccessImpl extends AbstractDataAccess implements LinkDataAccess {
+class LinkDataAccessImpl extends AbstractDataAccess implements LinkDataAccess {
 
     private static final String COLUMN_LINK_ID = "link_id";
     private static final String COLUMN_LINK_TITLE = "link_title";

@@ -36,7 +36,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class CommentDataAccessImpl
+class CommentDataAccessImpl
         extends AbstractDataAccess implements CommentDataAccess {
 
     private static final CommentOrderStrategy DEFAULT_STRATEGY =

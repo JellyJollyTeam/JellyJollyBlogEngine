@@ -23,7 +23,7 @@ import java.sql.SQLException;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class JdbcDataAccessException extends DataAccessException {
+class JdbcDataAccessException extends DataAccessException {
 
     private static final String DEFAULT_HINT = "jdbc data access exception";
 

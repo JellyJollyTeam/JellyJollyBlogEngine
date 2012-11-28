@@ -34,7 +34,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class CategoryDataAccessImpl
+class CategoryDataAccessImpl
         extends AbstractDataAccess implements CategoryDataAccess {
 
     private static final CategoryOrderStrategy DEFAULT_STRATEGY =

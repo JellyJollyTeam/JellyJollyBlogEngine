@@ -35,7 +35,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class AdminUserDataAccessImpl
+class AdminUserDataAccessImpl
         extends AbstractDataAccess implements AdminUserDataAccess {
 
     private static final String COLUMN_ID = "user_id";

@@ -36,7 +36,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class BlogInfoDataAccessImpl
+class BlogInfoDataAccessImpl
         extends AbstractDataAccess implements BlogInfoDataAccess {
 
     private static final String COLUMN_BLOG_ID = "blog_id";

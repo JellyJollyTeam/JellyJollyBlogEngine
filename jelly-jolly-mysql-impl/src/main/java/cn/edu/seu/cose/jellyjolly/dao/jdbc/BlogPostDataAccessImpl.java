@@ -40,7 +40,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class BlogPostDataAccessImpl
+class BlogPostDataAccessImpl
         extends AbstractDataAccess implements BlogPostDataAccess {
 
     private static final BlogPostOrderStrategy DEFAULT_STRATEGY =

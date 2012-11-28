@@ -35,7 +35,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class BlogPageDataAccessImpl
+class BlogPageDataAccessImpl
         extends AbstractDataAccess implements BlogPageDataAccess {
 
     private static final String COLUMN_PAGE_ID = "blog_page_id";
