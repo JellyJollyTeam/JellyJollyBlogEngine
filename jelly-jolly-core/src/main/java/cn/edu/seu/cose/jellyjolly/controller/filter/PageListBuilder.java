@@ -14,19 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.dto.BlogPageBar;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPageBar;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,19 +37,19 @@ import javax.servlet.http.HttpServletResponse;
 public class PageListBuilder extends HttpFilter {
 
     protected static final String ATTR_PAGE_LIST = "pageList";
+    private BlogPageDataAccess blogPageDataAccess;
 
-    private static BlogPageDataAccess getBlogPageDataAccess() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        return factory.getBlogPageDataAccess();
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        ServletContext ctx = filterConfig.getServletContext();
+        blogPageDataAccess = (BlogPageDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPageDataAccess");
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response,
             FilterChain chain) throws IOException, ServletException {
         try {
-            BlogPageDataAccess blogPageDataAccess = getBlogPageDataAccess();
             List<BlogPageBar> pageList = blogPageDataAccess.getPageBarList();
             request.setAttribute(ATTR_PAGE_LIST, pageList);
         } catch (DataAccessException ex) {
@@ -61,5 +60,4 @@ public class PageListBuilder extends HttpFilter {
         }
         chain.doFilter(request, response);
     }
-
 }

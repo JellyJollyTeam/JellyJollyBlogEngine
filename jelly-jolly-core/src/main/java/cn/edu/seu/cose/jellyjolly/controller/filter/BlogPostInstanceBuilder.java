@@ -14,15 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.util.Utils;
-import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
+import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,24 +37,16 @@ public class BlogPostInstanceBuilder extends HttpFilter {
 
     private static final String INFO_INVALID_INPUT =
             "BlogPostInstanceBuilder: invalid input";
-
     public static final String ATTRI_BLOG_POST = "blogpost";
-
     public static final String PARAM_BLOG_POST_ID = "postid";
-
     private BlogPostDataAccess blogPostDataAccess;
-
-    private static BlogPostDataAccess getBlogPostDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getBlogPostDataAccess();
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
-        blogPostDataAccess = getBlogPostDataAccess();
+        blogPostDataAccess = (BlogPostDataAccess) filterConfig
+                .getServletContext().getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPostDao");
     }
 
     @Override
@@ -86,5 +75,4 @@ public class BlogPostInstanceBuilder extends HttpFilter {
 
         chain.doFilter(request, response);
     }
-
 }

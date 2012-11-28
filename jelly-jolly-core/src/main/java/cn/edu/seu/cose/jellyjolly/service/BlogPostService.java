@@ -32,7 +32,10 @@ public interface BlogPostService {
     Collection<BlogPost> getBlogPostsOrderByDateDescending(
             long index, long count) throws DataAccessException;
 
-    Collection<BlogPost> getBlogPostByKeyword(String keyword)
+    Collection<BlogPost> getBlogPostsByKeyword(String keyword)
+            throws DataAccessException;
+
+    Collection<BlogPost> getBlogPostsByCategory(int categoryId)
             throws DataAccessException;
 
     BlogPost createBlogPost(String title, String content, long authorUserId,

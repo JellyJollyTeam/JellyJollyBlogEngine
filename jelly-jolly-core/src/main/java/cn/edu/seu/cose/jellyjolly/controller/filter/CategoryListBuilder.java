@@ -14,19 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,20 +37,20 @@ import javax.servlet.http.HttpServletResponse;
 public class CategoryListBuilder extends HttpFilter {
 
     private static final String ATTR_CATEGORY_LIST = "categoryList";
+    private CategoryDataAccess categoryDataAccess;
 
-    private static CategoryDataAccess getCategoryDataAccess() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        return factory.getCategoryDataAccess();
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        ServletContext ctx = filterConfig.getServletContext();
+        categoryDataAccess = (CategoryDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.categoryDataAccess");
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response,
-        FilterChain chain) throws IOException, ServletException {
+            FilterChain chain) throws IOException, ServletException {
         try {
-            CategoryDataAccess categoryDao = getCategoryDataAccess();
-            List<Category> categoryList = categoryDao.getAllCategories();
+            List<Category> categoryList = categoryDataAccess.getAllCategories();
             request.setAttribute(ATTR_CATEGORY_LIST, categoryList);
         } catch (DataAccessException ex) {
             Logger.getLogger(CategoryListBuilder.class.getName())
@@ -61,5 +60,4 @@ public class CategoryListBuilder extends HttpFilter {
         }
         chain.doFilter(request, response);
     }
-
 }

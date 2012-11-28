@@ -14,14 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import cn.edu.seu.cose.jellyjolly.dao.AdminUserDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.AdminUser;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,19 +36,12 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminUserListBuilder extends HttpFilter {
 
     private static final String ATTR_ADMIN_USER_LIST = "adminUserList";
-
     private AdminUserDataAccess adminUserDao;
-
-    private static AdminUserDataAccess getAdminUserDataAccess() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        return factory.getAdminUserDataAccess();
-    }
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        adminUserDao = getAdminUserDataAccess();
+        adminUserDao = (AdminUserDataAccess) config.getServletContext()
+                .getAttribute("cn.edu.seu.cose.jellyjolly.adminUserDataAccess");
     }
 
     @Override
@@ -67,5 +57,4 @@ public class AdminUserListBuilder extends HttpFilter {
             response.sendError(500, ex.getMessage());
         }
     }
-
 }

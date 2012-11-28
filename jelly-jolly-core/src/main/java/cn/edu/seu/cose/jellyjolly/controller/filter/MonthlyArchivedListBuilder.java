@@ -14,21 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.dto.MonthArchive;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.MonthArchive;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,19 +37,13 @@ import javax.servlet.http.HttpServletResponse;
 public class MonthlyArchivedListBuilder extends HttpFilter {
 
     public static final String ATTRI_ARCHIVE_LIST = "archivelist";
-
     private BlogPostDataAccess blogDataAccess;
-
-    private static BlogPostDataAccess getBlogPostDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getBlogPostDataAccess();
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        blogDataAccess = getBlogPostDataAccess();
+        ServletContext ctx = filterConfig.getServletContext();
+        blogDataAccess = (BlogPostDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogDataAccess");
     }
 
     @Override
@@ -60,7 +51,8 @@ public class MonthlyArchivedListBuilder extends HttpFilter {
             HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         try {
-            List<MonthArchive> archiveList = blogDataAccess.getMonthlyArchiveList();
+            List<MonthArchive> archiveList = blogDataAccess
+                    .getMonthlyArchiveList();
             request.setAttribute(ATTRI_ARCHIVE_LIST, archiveList);
         } catch (NumberFormatException ex) {
             response.sendError(400, ex.getMessage());
@@ -74,5 +66,4 @@ public class MonthlyArchivedListBuilder extends HttpFilter {
 
         chain.doFilter(request, response);
     }
-
 }

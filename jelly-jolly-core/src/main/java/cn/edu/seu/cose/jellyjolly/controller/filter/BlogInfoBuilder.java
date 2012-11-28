@@ -14,18 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
 import cn.edu.seu.cose.jellyjolly.dao.BlogInfoDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogInfo;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,12 +35,12 @@ import javax.servlet.http.HttpServletResponse;
 public class BlogInfoBuilder extends HttpFilter {
 
     private static final String ATTR_BLOG_INFO = "blogInfo";
+    private BlogInfoDataAccess blogInfoDao;
 
-    private static BlogInfoDataAccess getBlogInfoDataAccess() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        return factory.getBlogInfoDataAccess();
+    @Override
+    public void init(FilterConfig config) throws ServletException {
+        blogInfoDao = (BlogInfoDataAccess) config.getServletContext()
+                .getAttribute("cn.edu.seu.cose.jellyjolly.blogInfoDataAccess");
     }
 
     @Override
@@ -50,7 +48,6 @@ public class BlogInfoBuilder extends HttpFilter {
             HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         try {
-            BlogInfoDataAccess blogInfoDao = getBlogInfoDataAccess();
             BlogInfo blogInfo = blogInfoDao.getBlogInfoInstance();
             request.setAttribute(ATTR_BLOG_INFO, blogInfo);
         } catch (DataAccessException ex) {
@@ -63,5 +60,4 @@ public class BlogInfoBuilder extends HttpFilter {
                 .log(Level.INFO, "BlogInfoBuilder");
         chain.doFilter(request, response);
     }
-
 }

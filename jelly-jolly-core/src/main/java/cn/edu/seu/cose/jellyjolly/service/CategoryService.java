@@ -16,10 +16,25 @@
  */
 package cn.edu.seu.cose.jellyjolly.service;
 
+import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
+import cn.edu.seu.cose.jellyjolly.dto.Category;
+import java.util.List;
+
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
 public interface CategoryService {
 
+    Category getCategoryById(int id) throws DataAccessException;
+
+    List<String> getCategoryNames() throws DataAccessException;
+
+    List<Category> getCategories() throws DataAccessException;
+
+    Category createCategory() throws DataAccessException;
+
+    void changeCategoryName(int id, String name) throws DataAccessException;
+
+    void deleteCategoryById(int id) throws DataAccessException;
 }

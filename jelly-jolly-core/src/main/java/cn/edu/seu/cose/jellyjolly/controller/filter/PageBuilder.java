@@ -14,20 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.util.Utils;
-import cn.edu.seu.cose.jellyjolly.dto.BlogPage;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPageDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPage;
+import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,16 +38,15 @@ public class PageBuilder extends HttpFilter {
 
     private static final String INFO_INVALID_INPUT =
             "PageBuilder: invalid input";
-
     private static final String PARAM_PAGE_ID = "pageid";
-
     private static final String ATTR_PAGE = "blogpage";
+    private BlogPageDataAccess blogPageDataAccess;
 
-    private static BlogPageDataAccess getBlogPageDataAccess() {
-        DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        return factory.getBlogPageDataAccess();
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        ServletContext ctx = filterConfig.getServletContext();
+        blogPageDataAccess = (BlogPageDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPageDataAccess");
     }
 
     @Override
@@ -62,7 +59,6 @@ public class PageBuilder extends HttpFilter {
             return;
         }
         try {
-            BlogPageDataAccess blogPageDataAccess = getBlogPageDataAccess();
             int blogPageId = Integer.valueOf(pageIdParam);
             BlogPage page = blogPageDataAccess.getPage(blogPageId);
             request.setAttribute(ATTR_PAGE, page);
@@ -74,5 +70,4 @@ public class PageBuilder extends HttpFilter {
         }
         chain.doFilter(request, response);
     }
-
 }

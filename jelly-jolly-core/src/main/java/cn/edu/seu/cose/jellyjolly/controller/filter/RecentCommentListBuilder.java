@@ -14,20 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,22 +37,14 @@ import javax.servlet.http.HttpServletResponse;
 public class RecentCommentListBuilder extends HttpFilter {
 
     public static final String ATTRI_COMMENT_LIST = "commentlist";
-
     private static final long RECENT_LIMIT = 5;
-
     private CommentDataAccess commentDataAccess;
-
-    private static CommentDataAccess getCommentDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getCommentDataAccess();
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        super.init(filterConfig);
-        commentDataAccess = getCommentDataAccess();
+        ServletContext ctx = filterConfig.getServletContext();
+        commentDataAccess = (CommentDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.commentDataAccess");
     }
 
     @Override
@@ -72,5 +62,4 @@ public class RecentCommentListBuilder extends HttpFilter {
             response.sendError(500, ex.getMessage());
         }
     }
-
 }

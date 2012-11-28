@@ -16,12 +16,10 @@
  */
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.util.Utils;
-import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
+import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,42 +38,25 @@ public class BlogPostListBuilder extends HttpFilter {
 
     private static final String INFO_INVALID_INPUT =
             "BlogPostListBuilder: invalid input";
-
     public static final String ATTRI_POST_LIST = "postList";
-
     public static final String ATTRI_POST_COUNT = "postCount";
-
     private static final String PARAM_MAX_PER_PAGE = "max";
-
     private static final String PARAM_PAGE_NUM = "page";
-
     private static final String PARAM_YEAR = "year";
-
     private static final String PARAM_MONTH = "month";
-
     private static final String PARAM_CATEGORY_ID = "categoryid";
-
     private static final String PARAM_KEYWORD = "keyword";
-
     private static final long DEFAULT_PAGE = 1;
-
     private static final long DEFAULT_MAX = 5;
-
     private static final long DEFAULT_OFFSET = 0;
-
     private BlogPostDataAccess blogPostDataAccess;
-
-    private static BlogPostDataAccess getBlogPostDataAccess() {
-        DataAccessFactoryManager manager =
-            DataAccessFactoryManager.getInstance();
-        DataAccessFactory factory = manager.getAvailableFactory();
-        return factory.getBlogPostDataAccess();
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
-        blogPostDataAccess = getBlogPostDataAccess();
+        blogPostDataAccess = (BlogPostDataAccess) filterConfig
+                .getServletContext().getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPostDataAccess");
     }
 
     @Override
@@ -114,7 +95,7 @@ public class BlogPostListBuilder extends HttpFilter {
 
         // get post list by monthly archive
         doMontlyArchive(request, response, chain,
-                    yearParam, monthParam, pageParam, maxParam);
+                yearParam, monthParam, pageParam, maxParam);
     }
 
     private void doGetPostList(HttpServletRequest request,
@@ -228,8 +209,7 @@ public class BlogPostListBuilder extends HttpFilter {
     }
 
     private void buildBeans(HttpServletRequest request, List<BlogPost> postList, long postCount) {
-            request.setAttribute(ATTRI_POST_LIST, postList);
-            request.setAttribute(ATTRI_POST_COUNT, postCount);
+        request.setAttribute(ATTRI_POST_LIST, postList);
+        request.setAttribute(ATTRI_POST_COUNT, postCount);
     }
-
 }

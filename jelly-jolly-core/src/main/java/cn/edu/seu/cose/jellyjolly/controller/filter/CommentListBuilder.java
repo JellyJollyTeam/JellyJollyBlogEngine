@@ -14,21 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package cn.edu.seu.cose.jellyjolly.controller.filter;
 
-import cn.edu.seu.cose.jellyjolly.util.Utils;
-import cn.edu.seu.cose.jellyjolly.dto.Comment;
 import cn.edu.seu.cose.jellyjolly.dao.CommentDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactoryManager;
+import cn.edu.seu.cose.jellyjolly.dto.Comment;
+import cn.edu.seu.cose.jellyjolly.util.Utils;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,31 +40,19 @@ import javax.servlet.http.HttpServletResponse;
 public class CommentListBuilder extends HttpFilter {
 
     private static final long DEFAULT_OFFSET = 0;
-
     private static final long DEFAULT_MAX = 0;
-
     private static final String INFO_INVALID_INPUT =
             "CommentListBuilder: invalid input";
-
     private static final String PARAM_PAGE = "page";
-
     private static final String PARAM_MAX = "max";
-
     public static final String ATTRI_COMMENT_LIST = "commentlist";
-
     private CommentDataAccess commentDataAccess;
-
-    private static CommentDataAccess getCommentDataAccess() {
-            DataAccessFactoryManager manager =
-                DataAccessFactoryManager.getInstance();
-            DataAccessFactory factory = manager.getAvailableFactory();
-            return factory.getCommentDataAccess();
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        super.init(filterConfig);
-        commentDataAccess = getCommentDataAccess();
+        ServletContext ctx = filterConfig.getServletContext();
+        commentDataAccess = (CommentDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.commentDataAccess");
     }
 
     @Override
@@ -89,14 +77,16 @@ public class CommentListBuilder extends HttpFilter {
                 long postId = Long.valueOf(postIdParam);
                 doGetCommentListOfPost(request, response, postId);
             }
-            if (postIdParam == null && (pageParam != null && maxParam != null)) {
+            if (postIdParam == null
+                    && (pageParam != null && maxParam != null)) {
                 long page = Long.valueOf(pageParam);
                 long max = Long.valueOf(maxParam);
                 long limit = (max > 0) ? max : DEFAULT_MAX;
                 long offset = (page < 1) ? DEFAULT_OFFSET : (page - 1) * max;
                 doGetComments(request, response, offset, limit);
             }
-            if (postIdParam == null && (pageParam == null || maxParam == null)) {
+            if (postIdParam == null
+                    && (pageParam == null || maxParam == null)) {
                 doGetAllComments(request, response);
             }
 
@@ -120,16 +110,17 @@ public class CommentListBuilder extends HttpFilter {
     private void doGetComments(HttpServletRequest request,
             HttpServletResponse response, long offset, long limit)
             throws IOException, ServletException, DataAccessException {
-        List<Comment> commentList = commentDataAccess.getComments(offset, limit);
+        List<Comment> commentList = commentDataAccess.getComments(offset,
+                limit);
         request.setAttribute(ATTRI_COMMENT_LIST, commentList);
     }
 
     private void doGetCommentListOfPost(HttpServletRequest request,
             HttpServletResponse response, long postId)
             throws IOException, ServletException, DataAccessException {
-        List<Comment> commentList = commentDataAccess.getCommentsByPostId(postId,
+        List<Comment> commentList = commentDataAccess.getCommentsByPostId(
+                postId,
                 CommentDataAccess.CommentOrderStrategy.ORDERED_BY_DATE_DESC);
         request.setAttribute(ATTRI_COMMENT_LIST, commentList);
     }
-
 }
