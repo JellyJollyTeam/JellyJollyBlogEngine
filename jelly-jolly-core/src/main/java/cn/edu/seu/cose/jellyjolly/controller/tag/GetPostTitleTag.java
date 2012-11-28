@@ -17,41 +17,51 @@
 package cn.edu.seu.cose.jellyjolly.controller.tag;
 
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
 import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
+import javax.servlet.ServletContext;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public class GetPostTitleTag extends SimpleTagSupport {
+public class GetPostTitleTag extends TagSupport {
 
+    private static final Logger logger = Logger.getLogger(
+            GetPostTitleTag.class.getName());
     private BlogPostDataAccess blogPostDataAccess;
     private long postId;
 
     public GetPostTitleTag() {
-        blogPostDataAccess = (BlogPostDataAccess) getJspContext().getAttribute(
+        ServletContext ctx = pageContext.getServletContext();
+        blogPostDataAccess = (BlogPostDataAccess) ctx.getAttribute(
                 "cn.edu.seu.cose.jellyjolly.blogPostDataAccess");
+    }
+
+    @Override
+    public int doStartTag() throws JspException {
+        return TagSupport.EVAL_BODY_INCLUDE;
+    }
+
+    @Override
+    public int doEndTag() throws JspException {
+        try {
+            BlogPost post = blogPostDataAccess.getPostById(postId);
+            String title = post.getTitle();
+            JspWriter out = pageContext.getOut();
+            out.print(title);
+            return TagSupport.EVAL_PAGE;
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            throw new JspException(ex);
+        }
     }
 
     public void setPostId(Object postId) {
         this.postId = (Long) postId;
-    }
-
-    @Override
-    public void doTag() throws IOException {
-        try {
-            BlogPost post = blogPostDataAccess.getPostById(postId);
-            String title = post.getTitle();
-            getJspContext().getOut().print(title);
-        } catch (DataAccessException ex) {
-            Logger.getLogger(GetPostTitleTag.class.getName())
-                    .log(Level.SEVERE, ex.getMessage(), ex);
-        }
     }
 }
