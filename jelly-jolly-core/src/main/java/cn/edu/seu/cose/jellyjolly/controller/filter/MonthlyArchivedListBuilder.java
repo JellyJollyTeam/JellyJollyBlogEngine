@@ -37,13 +37,13 @@ import javax.servlet.http.HttpServletResponse;
 public class MonthlyArchivedListBuilder extends HttpFilter {
 
     public static final String ATTRI_ARCHIVE_LIST = "archivelist";
-    private BlogPostDataAccess blogDataAccess;
+    private BlogPostDataAccess blogPostDataAccess;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         ServletContext ctx = filterConfig.getServletContext();
-        blogDataAccess = (BlogPostDataAccess) ctx.getAttribute(
-                "cn.edu.seu.cose.jellyjolly.blogDataAccess");
+        blogPostDataAccess = (BlogPostDataAccess) ctx.getAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPostDataAccess");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MonthlyArchivedListBuilder extends HttpFilter {
             HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         try {
-            List<MonthArchive> archiveList = blogDataAccess
+            List<MonthArchive> archiveList = blogPostDataAccess
                     .getMonthlyArchiveList();
             request.setAttribute(ATTRI_ARCHIVE_LIST, archiveList);
         } catch (NumberFormatException ex) {
