@@ -43,6 +43,8 @@ public class ContextDependencyInjection implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        logger.log(Level.INFO,
+                "Injecting the context dependency");
         ServletContext ctx = sce.getServletContext();
         try {
             Reader configReader = getConfigReader(ctx);
@@ -54,6 +56,7 @@ public class ContextDependencyInjection implements ServletContextListener {
                     "Failed during injecting the context dependency");
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
+        logger.log(Level.INFO, "Context dependency Injected");
     }
 
     private Reader getConfigReader(ServletContext ctx)
