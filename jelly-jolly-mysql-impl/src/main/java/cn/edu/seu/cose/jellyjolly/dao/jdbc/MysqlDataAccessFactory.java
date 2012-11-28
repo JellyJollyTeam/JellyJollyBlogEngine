@@ -30,7 +30,7 @@ import javax.sql.DataSource;
  *
  * @author rAy <predator.ray@gmail.com>
  */
-public abstract class MysqlDataAccessFactory implements DataAccessFactory {
+public class MysqlDataAccessFactory implements DataAccessFactory {
 
     private DataSource dataSource;
 
