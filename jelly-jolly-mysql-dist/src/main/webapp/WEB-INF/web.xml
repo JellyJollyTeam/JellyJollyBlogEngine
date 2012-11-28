@@ -16,20 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-    <context-param>
-        <param-name>dao-factory-class-name</param-name>
-        <param-value>cn.edu.seu.cose.jellyjolly.model.dao.jdbc.mysql.MysqlDataAccessFactoryImpl</param-value>
-    </context-param>
-    <resource-ref>
-        <res-ref-name>jdbc/jellyjolly_schema</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-    </resource-ref>
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     <listener>
-        <listener-class>cn.edu.seu.cose.jellyjolly.controller.listener.PersistenceImplementationInjection</listener-class>
+        <listener-class>cn.edu.seu.cose.jellyjolly.dist.mysql.ContextDependencyInjection</listener-class>
     </listener>
     <filter>
         <filter-name>EncodingFilter</filter-name>
