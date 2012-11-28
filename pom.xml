@@ -20,5 +20,6 @@
         <module>jelly-jolly-persistence-api</module>
         <module>jelly-jolly-plugin-api</module>
         <module>jelly-jolly-sae-dist</module>
+        <module>jelly-jolly-bees-dist</module>
     </modules>
 </project>

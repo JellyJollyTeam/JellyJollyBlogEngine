@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cloudbees-web-app xmlns="http://www.cloudbees.com/xml/webapp/1">
+    <appid>JellyJollyBlog</appid>
+    <context-param>
+        <param-name>application.environment</param-name>
+        <param-value>prod</param-value>
+    </context-param>
+    <resource name="jdbc/jellyjolly_schema" auth="Container" type="javax.sql.DataSource">
+        <param name="username" value="jellyjolly" />
+        <param name="password" value="admin" />
+        <param name="url" value="jdbc:cloudbees://jellyjolly_schema" />
+    </resource>
+</cloudbees-web-app>
