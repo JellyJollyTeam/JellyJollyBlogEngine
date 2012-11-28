@@ -46,7 +46,7 @@ public class BlogPostInstanceBuilder extends HttpFilter {
         super.init(filterConfig);
         blogPostDataAccess = (BlogPostDataAccess) filterConfig
                 .getServletContext().getAttribute(
-                "cn.edu.seu.cose.jellyjolly.blogPostDao");
+                "cn.edu.seu.cose.jellyjolly.blogPostDataAccess");
     }
 
     @Override
