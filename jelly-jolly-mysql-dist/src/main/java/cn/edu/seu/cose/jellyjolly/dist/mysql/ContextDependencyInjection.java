@@ -104,9 +104,9 @@ public class ContextDependencyInjection implements ServletContextListener {
                 dataAccessFactory.getBlogPostDataAccess());
         ctx.setAttribute("cn.edu.seu.cose.jellyjolly.categoryDataAccess",
                 dataAccessFactory.getCategoryDataAccess());
-        ctx.setAttribute("cn.edu.seu.cose.commentDataAccess.",
+        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.commentDataAccess",
                 dataAccessFactory.getCommentDataAccess());
-        ctx.setAttribute("cn.edu.seu.cose.linkDataAccess.",
+        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.linkDataAccess",
                 dataAccessFactory.getLinkDataAccess());
     }
 
