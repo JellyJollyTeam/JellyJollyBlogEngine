@@ -9,8 +9,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>注册您的Jelly-Jolly账户</title>
-        <link rel="stylesheet" href="login.css" type="text/css" />
+        <title>初始化您的Jelly-Jolly账户</title>
+        <link rel="stylesheet" href="./css/login.css" type="text/css" />
         <script language="javascript">
             function CheckPwd(){
                     if($("#pwd1").val()!=$("#pwd2").val()){
