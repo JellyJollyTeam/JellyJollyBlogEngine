@@ -36,11 +36,11 @@ import org.xml.sax.SAXException;
  * @author rAy <predator.ray@gmail.com>
  */
 public class DomRepresentationBuilder {
-    
+
     private static final String DEFAULT_ENCODING = "UTF-8";
-    
+
     private DocumentBuilder docBuilder;
-    
+
     public DomRepresentationBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory docBuilderFactory =
                 DocumentBuilderFactory.newInstance();
@@ -52,14 +52,15 @@ public class DomRepresentationBuilder {
             ParserConfigurationException {
         String xmlString = getXmlString(obj);
         Document outputDocument = getDocumentByXmlString(xmlString);
-        
+
         // build domrepresentation by the document
         DomRepresentation outputRepresentation = new DomRepresentation();
         outputRepresentation.setDocument(outputDocument);
         return outputRepresentation;
     }
-    
-    private String getXmlString(Object obj) throws JAXBException, IOException {
+
+    private String getXmlString(Object obj) throws JAXBException,
+            IOException {
         Writer stringWriter = new StringWriter();
         JAXBContext jaxbContext = JAXBContext.newInstance(obj.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -68,7 +69,7 @@ public class DomRepresentationBuilder {
         stringWriter.close();
         return stringWriter.toString();
     }
-    
+
     private Document getDocumentByXmlString(String xmlString)
             throws SAXException, IOException {
         byte[] byteArrayInUtf8 = xmlString.getBytes(DEFAULT_ENCODING);

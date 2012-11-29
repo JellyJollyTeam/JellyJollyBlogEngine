@@ -18,7 +18,6 @@ package cn.edu.seu.cose.jellyjolly.rest.resource;
 
 import cn.edu.seu.cose.jellyjolly.dao.CategoryDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
 import cn.edu.seu.cose.jellyjolly.dto.Category;
 import cn.edu.seu.cose.jellyjolly.rest.dto.Categories;
 import cn.edu.seu.cose.jellyjolly.rest.dto.CategoryInstance;
@@ -33,6 +32,8 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
@@ -45,6 +46,9 @@ public class CategoriesResource extends ServerResource {
     private CategoryDataAccess categoryDao;
 
     public CategoriesResource() {
+        ApplicationContext ctx = new ClassPathXmlApplicationContext(
+                "cn/edu/seu/cose/jellyjolly/dist/applicationContext.xml");
+        categoryDao = (CategoryDataAccess) ctx.getBean("categoryDataAccess");
     }
 
     @Get("xml")
@@ -66,7 +70,8 @@ public class CategoriesResource extends ServerResource {
         try {
             DomRepresentation domCategory = new DomRepresentation(newCategory);
             DomRepresentationReader reader = new DomRepresentationReader();
-            CategoryInstance categoryInstance = (CategoryInstance) reader.getXmlObject(domCategory, CategoryInstance.class);
+            CategoryInstance categoryInstance = (CategoryInstance) reader
+                    .getXmlObject(domCategory, CategoryInstance.class);
             categoryDao.createNewCategory(categoryInstance.getName());
             return ResourceUtils.getUpdateSuccessRepresentation();
         } catch (Exception ex) {

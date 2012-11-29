@@ -18,7 +18,6 @@ package cn.edu.seu.cose.jellyjolly.rest.resource;
 
 import cn.edu.seu.cose.jellyjolly.dao.BlogPostDataAccess;
 import cn.edu.seu.cose.jellyjolly.dao.DataAccessException;
-import cn.edu.seu.cose.jellyjolly.dao.DataAccessFactory;
 import cn.edu.seu.cose.jellyjolly.dto.BlogPost;
 import cn.edu.seu.cose.jellyjolly.rest.JellyJollyRouter;
 import cn.edu.seu.cose.jellyjolly.rest.dto.BlogPostInstance;
@@ -42,6 +41,8 @@ import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
@@ -68,6 +69,9 @@ public class BlogPostInstanceResource extends ServerResource {
     }
 
     public BlogPostInstanceResource() {
+        ApplicationContext ctx = new ClassPathXmlApplicationContext(
+                "cn/edu/seu/cose/jellyjolly/dist/applicationContext.xml");
+        blogPostDao = (BlogPostDataAccess) ctx.getBean("blogInfoDataAccess");
     }
 
     @Get("xml")
