@@ -56,8 +56,6 @@ public class BlogInfoBuilder extends HttpFilter {
             response.sendError(500, ex.getMessage());
             return;
         }
-        Logger.getLogger(BlogInfoBuilder.class.getName())
-                .log(Level.INFO, "BlogInfoBuilder");
         chain.doFilter(request, response);
     }
 }
