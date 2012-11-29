@@ -4,7 +4,7 @@
 
     <groupId>cn.edu.seu.cose.jellyjolly</groupId>
     <artifactId>jelly-jolly-plugin-api</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Jelly Jolly Blog Engine - Plugin API</name>
@@ -13,7 +13,7 @@
     <parent>
         <groupId>cn.edu.seu.cose.jellyjolly</groupId>
         <artifactId>jelly-jolly</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <properties>

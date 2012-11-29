@@ -4,7 +4,7 @@
 
     <groupId>cn.edu.seu.cose.jellyjolly</groupId>
     <artifactId>jelly-jolly-bees-dist</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>Jelly Jolly Blog Engine - Cloudbees Distribution</name>
@@ -12,7 +12,7 @@
     <parent>
         <groupId>cn.edu.seu.cose.jellyjolly</groupId>
         <artifactId>jelly-jolly</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <properties>
