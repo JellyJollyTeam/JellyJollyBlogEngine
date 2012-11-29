@@ -31,6 +31,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
@@ -40,17 +42,17 @@ public class ContextDependencyInjection implements ServletContextListener {
 
     private static final Logger logger = Logger.getLogger(
             ContextDependencyInjection.class.getName());
+    private static final ApplicationContext appCtx =
+            new ClassPathXmlApplicationContext(
+            "cn/edu/seu/cose/jellyjolly/dist/applicationContext.xml");
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         logger.log(Level.INFO,
                 "Injecting the context dependency");
-        ServletContext ctx = sce.getServletContext();
+        ServletContext servletCtx = sce.getServletContext();
         try {
-            Reader configReader = getConfigReader(ctx);
-            Properties cfgpp = getConfigPropertiesByReader(configReader);
-            DataSource dataSource = getDataSourceByProperties(cfgpp);
-            injectContextDependency(dataSource, ctx);
+            injectContextDependency(appCtx, servletCtx);
         } catch (Exception ex) {
             logger.log(Level.SEVERE,
                     "Failed during injecting the context dependency");
@@ -59,55 +61,29 @@ public class ContextDependencyInjection implements ServletContextListener {
         logger.log(Level.INFO, "Context dependency Injected");
     }
 
-    private Reader getConfigReader(ServletContext ctx)
-            throws FileNotFoundException {
-        String realPath = ctx.getRealPath("/");
-        String dbcpConfigPath = new StringBuilder().append(realPath)
-                .append("WEB-INF/dbcp.jdbc.properties").toString();
-        logger.log(Level.INFO, new StringBuilder()
-                .append("Reading config from: ")
-                .append(dbcpConfigPath)
-                .toString());
-        File dbcpConfigFile = new File(dbcpConfigPath);
-        Reader configReader = new FileReader(dbcpConfigFile);
-        return configReader;
-    }
-
-    private Properties getConfigPropertiesByReader(Reader configReader)
-            throws IOException {
-        Properties cfgpp = new Properties();
-        cfgpp.load(configReader);
-        return cfgpp;
-    }
-
-    private DataSource getDataSourceByProperties(Properties cfgpp) {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(cfgpp.getProperty(
-                "jdbc.driverClassName"));
-        dataSource.setUrl(cfgpp.getProperty("jdbc.url"));
-        dataSource.setUsername(cfgpp.getProperty("jdbc.username"));
-        dataSource.setPassword(cfgpp.getProperty("jdbc.password"));
-        return dataSource;
-    }
-
-    private void injectContextDependency(DataSource dataSource,
-            ServletContext ctx) {
-        DataAccessFactory dataAccessFactory =
-                new MysqlDataAccessFactory(dataSource);
-        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.adminUserDataAccess",
-                dataAccessFactory.getAdminUserDataAccess());
-        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.blogInfoDataAccess",
-                dataAccessFactory.getBlogInfoDataAccess());
-        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.blogPageDataAccess",
-                dataAccessFactory.getBlogPageDataAccess());
-        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.blogPostDataAccess",
-                dataAccessFactory.getBlogPostDataAccess());
-        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.categoryDataAccess",
-                dataAccessFactory.getCategoryDataAccess());
-        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.commentDataAccess",
-                dataAccessFactory.getCommentDataAccess());
-        ctx.setAttribute("cn.edu.seu.cose.jellyjolly.linkDataAccess",
-                dataAccessFactory.getLinkDataAccess());
+    private void injectContextDependency(ApplicationContext appCtx,
+            ServletContext servletCtx) {
+        servletCtx.setAttribute(
+                "cn.edu.seu.cose.jellyjolly.adminUserDataAccess",
+                appCtx.getBean("adminUserDataAccess"));
+        servletCtx.setAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogInfoDataAccess",
+                appCtx.getBean("blogInfoDataAccess"));
+        servletCtx.setAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPageDataAccess",
+                appCtx.getBean("blogPageDataAccess"));
+        servletCtx.setAttribute(
+                "cn.edu.seu.cose.jellyjolly.blogPostDataAccess",
+                appCtx.getBean("blogPostDataAccess"));
+        servletCtx.setAttribute(
+                "cn.edu.seu.cose.jellyjolly.categoryDataAccess",
+                appCtx.getBean("categoryDataAccess"));
+        servletCtx.setAttribute(
+                "cn.edu.seu.cose.jellyjolly.commentDataAccess",
+                appCtx.getBean("commentDataAccess"));
+        servletCtx.setAttribute(
+                "cn.edu.seu.cose.jellyjolly.linkDataAccess",
+                appCtx.getBean("linkDataAccess"));
     }
 
     @Override
