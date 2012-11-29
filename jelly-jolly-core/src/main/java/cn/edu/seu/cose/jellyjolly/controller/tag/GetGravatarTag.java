@@ -17,7 +17,6 @@
 package cn.edu.seu.cose.jellyjolly.controller.tag;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
