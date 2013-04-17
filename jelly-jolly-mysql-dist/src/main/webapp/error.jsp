@@ -13,6 +13,6 @@
     </head>
     <body>
         <h1>Not Found!</h1>
-        <a href="index.com">back</a>
+        <a href="home.com">back</a>
     </body>
 </html>
